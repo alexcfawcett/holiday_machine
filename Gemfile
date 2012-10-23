@@ -18,5 +18,8 @@ group :development, :test do
   gem "debugger"
   gem 'rspec'
   gem 'rspec-rails'
+  gem 'guard-rspec'
   gem 'factory_girl_rails'
+  gem 'simplecov'
+  gem 'sqlite3'
 end
