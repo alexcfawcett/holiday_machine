@@ -3,6 +3,8 @@ require 'spec_helper'
 describe AbsencesController do
 
   before do
+    @user_type = Factory.create(:user_type)
+    @holiday_year = Factory.create(:holiday_year)
     @user = Factory.create(:user)
     @user.confirm!
     sign_in @user
