@@ -1,10 +1,6 @@
 development:
-  adapter: mysql2
-  encoding: utf8
-  database: holiday_development
-  pool: 5
-  username: root
-  password: admin
+  adapter: sqlite3
+  database: db/develop.sqlite3
 
 test:
   adapter: sqlite3
