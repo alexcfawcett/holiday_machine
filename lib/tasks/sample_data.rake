@@ -21,7 +21,7 @@ def make_manager_user
     surname: surname,
     user_type_id: 2)
 
-    manager_user.skip_confirmation!
+    manager_user.skip_confirmation! #so we don't send emails for test data
     manager_user.save
 
 end
@@ -44,7 +44,7 @@ def make_users
       manager_id: 11,
       user_type_id: 1)
 
-      user.skip_confirmation!
+      user.skip_confirmation! #skip emails
       user.save
   end
 end
