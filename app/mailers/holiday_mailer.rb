@@ -5,6 +5,7 @@ class HolidayMailer < ActionMailer::Base
     @user = user
     @manager = manager
     @holiday = holiday
+    @clashing_users_array = holiday_clash_with
     @url  = "http://example.com/validate_holiday"
     mail(:to      => @manager.email, :from => @user.email,
          :subject => "You have a holiday request awaiting")
@@ -41,6 +42,21 @@ class HolidayMailer < ActionMailer::Base
               end
     mail(:to      => @user.email, :from => @user.email,
          :subject => subject)
+  end
+
+  def holiday_clash_with 
+    array = Array.new
+    userAbsence = Absence.find_by_user_id(@user.id)
+     User.all.each do |u|
+       #Users with the same manager or check if user is the manager
+       if u.manager_id == @manager.id || u.email == @manager.email 
+         ab = Absence.find_by_user_id(u.id)
+         if userAbsence.date_from <= ab.date_to && ab.date_from <= userAbsence.date_to
+           array << u unless u.id == @user.id
+         end
+       end
+    end 
+     return array
   end
 
 end
