@@ -47,16 +47,13 @@ class HolidayMailer < ActionMailer::Base
   def holiday_clash_with 
     array = Array.new
     userAbsence = Absence.find_by_user_id(@user.id)
-     User.all.each do |u|
-       #Users with the same manager or check if user is the manager
-       if u.manager_id == @manager.id || u.email == @manager.email 
-         ab = Absence.find_by_user_id(u.id)
-         if userAbsence.date_from <= ab.date_to && ab.date_from <= userAbsence.date_to
-           array << u unless u.id == @user.id
-         end
-       end
+    User.get_team_users(@user.manager_id).each do |u|
+      u.absences.each do |ab|
+       if userAbsence.date_from <= ab.date_to && ab.date_from <= userAbsence.date_to
+         array << u unless u.id == @user.id
+        end
+      end
     end 
-     return array
+    return array
   end
-
 end
