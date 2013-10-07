@@ -9,17 +9,11 @@
 			<th>Working days</th>
 			<th>Status</th>
 		</thead>
-		<tbody>
-			<% current_user.absences.per_holiday_year(@current_year_id).each do |absence| %>
-				<%= render partial: 'absence_row', :locals => { :absence => absence } %>
-			<% end %>
-			<%= render partial: 'totals_row', :locals => { :user => current_user } %>
-			<% @users.each do |user| %>
-				<% user.absences.per_holiday_year(@current_year_id).each do |absence| %>
-					<%= render partial: 'absence_row', :locals => { :absence => absence }  %>
-				<% end %>
-				<%= render partial: 'totals_row', :locals => { :user => user } %>
-			<% end %>
+    <tbody>
+      <%= render partial: 'absence_table_split', :locals => { :current_user => current_user } %>
+      <% @users.each do |user| %>
+        <%= render partial: 'absence_table_split', :locals => { :current_user => user } %>
+      <% end %>
 		</tbody>
 	</table>
 </div>

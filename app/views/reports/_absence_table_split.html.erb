@@ -1,0 +1,8 @@
+<% if current_user.absences.per_holiday_year(@current_year_id).empty? %>
+  <%= render partial: 'blank_absence_row', :locals => { :current_user => current_user } %>
+<% else %>
+  <% current_user.absences.per_holiday_year(@current_year_id).each do |absence| %>
+    <%= render partial: 'absence_row', :locals => { :absence => absence } %>
+  <% end %> 
+<% end %>
+<%= render partial: 'totals_row', :locals => { :user => current_user } %>
