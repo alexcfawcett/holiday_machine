@@ -17,15 +17,13 @@ module AbsencesHelper
 
   def users_off_on_given_day(managerid, date)
     array = []
-   User.get_team_users(managerid).each do |user|
-     unless @current_user.id == user.id
-      user.absences.each do |ab|
-       if (ab.date_from..ab.date_to).cover?(date)
-          array << user
+    User.get_team_users(managerid).each do |user|
+      unless @current_user.id == user.id
+        user.absences.each do |ab|
+          array << user if (ab.date_from..ab.date_to).cover?(date)
         end
       end
-     end
-   end
+    end
     array
   end
 
