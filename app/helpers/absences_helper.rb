@@ -14,6 +14,22 @@ module AbsencesHelper
     end
   end
 
+
+  def users_off_on_given_day(managerid, date)
+    array = []
+   User.get_team_users(managerid).each do |user|
+     unless @current_user.id == user.id
+      user.absences.each do |ab|
+       if (ab.date_from..ab.date_to).cover?(date)
+          array << user
+        end
+      end
+     end
+   end
+    array
+  end
+
+
   def holiday_status(absence)
     status = absence.holiday_status.status
     content_tag :span, status, :class => holiday_status_class(absence)
