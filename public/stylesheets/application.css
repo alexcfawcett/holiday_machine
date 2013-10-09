@@ -821,3 +821,8 @@ dl dt {
 .administer h3 {
   line-height: 45px;
 }
+
+.todaytomorrow {
+  width: 50%;
+  float: left;
+}
