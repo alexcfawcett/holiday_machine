@@ -12,7 +12,7 @@ gem "simple-navigation"
 # gem 'client_side_validations' DEPRECATED - find alternative
 gem "exception_notification"
 
-# TODO use Rails 4 strong params
+# TODO use Rails 4 strong params instead of this
 gem "protected_attributes"
 
 gem 'sass'
@@ -22,11 +22,16 @@ gem 'faker', '1.0.1'
 
 # TODO is this needed here??
 gem 'sprockets-rails'
+# ###########################
 
 gem 'jquery-rails'
 gem 'jquery-ui-rails'
 gem 'turbolinks'
 gem 'fullcalendar-rails'
+gem 'less-rails'
+gem 'semantic-ui-rails'
+gem 'therubyracer'
+gem 'sass-rails'
 
 group :production do
   gem 'mysql2'
