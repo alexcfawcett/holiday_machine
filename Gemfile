@@ -32,6 +32,7 @@ gem 'less-rails'
 gem 'semantic-ui-rails'
 gem 'therubyracer'
 gem 'sass-rails'
+gem 'compass-rails'
 
 group :production do
   gem 'mysql2'
@@ -45,4 +46,5 @@ group :development, :test do
   gem 'factory_girl_rails'
   gem 'simplecov'
   gem 'sqlite3'
+  gem 'thin'
 end
