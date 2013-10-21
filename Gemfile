@@ -1,18 +1,32 @@
 source 'http://rubygems.org'
+ruby "2.0.0"
 
-gem 'rails', '3.2.6'
+gem 'rails', '4.0.0'
 gem 'pg'
-gem "devise", "~> 2.1.2"
+gem "devise", "~> 3.1.1"
 gem 'devise_invitable'
+gem 'devise-encryptable'
 gem 'simple_form'
 gem 'uuid'
 gem "simple-navigation"
-gem 'client_side_validations'
+# gem 'client_side_validations' DEPRECATED - find alternative
 gem "exception_notification"
+
+# TODO use Rails 4 strong params
+gem "protected_attributes"
+
 gem 'sass'
 gem 'compass'
 gem 'acts_as_tree'
 gem 'faker', '1.0.1'
+
+# TODO is this needed here??
+gem 'sprockets-rails'
+
+gem 'jquery-rails'
+gem 'jquery-ui-rails'
+gem 'turbolinks'
+gem 'fullcalendar-rails'
 
 group :production do
   gem 'mysql2'

@@ -4,9 +4,9 @@
     <title>Holiday Thyme</title>
     <%= csrf_meta_tag %>
     <%# We dont' want jquery UI css on the calendar as it screws up the styling/ layout %>
-    <% if params[:controller] != 'calendar' %>
-      <%= stylesheet_link_tag "/javascripts/jquery-ui-1.8.12.south-street/css/south-street/jquery-ui-1.8.12.custom.css" %>
-    <% end %>
+    <%# if params[:controller] != 'calendar' %>
+      <%#= stylesheet_link_tag "/javascripts/jquery-ui-1.8.12.south-street/css/south-street/jquery-ui-1.8.12.custom.css" %>
+    <%# end %>
     <%= stylesheet_link_tag "fullcalendar", "reveal", "application" %>
     <%= yield(:head) %>
   </head>
@@ -52,7 +52,7 @@
     <p class ="content"></p>
   </div>
 
-  <%= javascript_include_tag 'jquery-1.7.2.min.js', 'rails', 'application', 'jquery.formatdate', 'jquery-ui-1.8.12.south-street/js/jquery-ui-1.8.12.custom.min', 'rails.validations', '/javascripts/fullcalendar.min.js' %>
+  <%= javascript_include_tag 'jquery', 'rails', 'application', 'jquery.formatdate', 'rails.validations', 'fullcalendar' %>
   <%= yield(:javascripts) %>
 </body>
 </html>
