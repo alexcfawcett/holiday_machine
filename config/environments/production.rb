@@ -21,7 +21,7 @@ HolidayMachine::Application.configure do
   :address              => "smtp.gmail.com",
   :port                 => 587,
   :domain               => 'gmail.com',
-  :user_name            => 'holiday.machine',
+  :user_name            => 'holiday.machine2',
   :password             => 'E1eph4nt',
   :authentication       => 'plain',
   :enable_starttls_auto => true  }
