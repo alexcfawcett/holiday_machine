@@ -69,14 +69,14 @@
       <h3>Off Today</h3>
       <% date = DateTime.now.beginning_of_day + 12.hours %>
       <% user_id = current_user.manager_id %>
-      <%= render partial: 'todaytomorrow', :locals => { :heading => 'Managers and Colleagues', :user_id => user_id, :date => date } %>
+      <%= render partial: 'todaytomorrow', :locals => { :heading => 'Manager and Colleagues', :user_id => user_id, :date => date } %>
       <%= render partial: 'todaytomorrow', :locals => { :heading => 'Your Team', :user_id => user_id, :date => date } %>
     </div>
     <div class = "todaytomorrow">
       <h3>Off Tomorrow</h3>
       <% date = DateTime.now.tomorrow %>
       <% user_id = current_user.id %>
-      <%= render partial: 'todaytomorrow', :locals => { :heading => 'Managers and Colleagues', :user_id => user_id, :date => date } %>
+      <%= render partial: 'todaytomorrow', :locals => { :heading => 'Manager and Colleagues', :user_id => user_id, :date => date } %>
       <%= render partial: 'todaytomorrow', :locals => { :heading => 'Your Team', :user_id => user_id, :date => date } %>
     </div>
   </div>
