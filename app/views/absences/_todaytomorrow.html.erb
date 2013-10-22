@@ -1,12 +1,11 @@
-<h5>Manager and Colleagues</h5>
+<h5><%= heading %></h5>
 <ul>
-   <% users_off_on_given_day(current_user.manager_id, date).each do |user| %> 
-     <li><%= user.full_name %></li>  
-   <% end %>  
-</ul>
-<h5>Your Team</h5>
-<ul>
-   <% users_off_on_given_day(current_user.id, date).each do |user| %>  
-     <li><%= user.full_name %></li> 
-   <% end %>
+  <% users = users_off_on_given_day(user_id, date) %>
+  <% if users.empty? %>
+    <li>None</li>
+  <% else %>
+    <% users.each do |user| %>
+      <li><%= user.full_name %></li>
+    <% end %>
+  <% end %>
 </ul>
