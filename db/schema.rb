@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120801141422) do
+ActiveRecord::Schema.define(:version => 20131021102325) do
 
   create_table "absence_types", :force => true do |t|
     t.string "name"
@@ -121,6 +121,7 @@ ActiveRecord::Schema.define(:version => 20120801141422) do
     t.string   "invited_by_type"
     t.datetime "remember_created_at"
     t.datetime "reset_password_sent_at"
+    t.datetime "invitation_created_at"
   end
 
   add_index "users", ["invitation_token"], :name => "index_users_on_invitation_token"
