@@ -59,6 +59,8 @@ $(document).ready(function() {
     var m = date.getMonth();
     var y = date.getFullYear();
 
+    var calendarFilterVal =  $('#calendar_filter').val();
+
     $('#calendar').fullCalendar({
         header: {
             left: 'prev,next today',
@@ -70,23 +72,48 @@ $(document).ready(function() {
             window.location = "/vacations/" + calEvent.id
         },
         theme: true,
-        events: "/calendar",
+        events: "/calendar?filter=" + calendarFilterVal,
         disableDragging: true,
         weekends: false
     });
 
-    $('.fc-button-next, .fc-button-prev, .fc-button-today').bind('click', monthNavigation);
+    // $('.fc-button-next, .fc-button-prev, .fc-button-today').bind('click', monthNavigation);
 
-    function monthNavigation(e) {
-      var currentDate = $('#calendar').fullCalendar('getDate')
-        , currentMonth = currentDate.getMonth()
-        , currentYear = currentDate.getFullYear()
-        , urlString = '/calendar/show?year=' + currentYear + '&month=' + currentMonth
+    // function monthNavigation(e) {
+    //   var currentDate = $('#calendar').fullCalendar('getDate')
+    //     , currentMonth = currentDate.getMonth()
+    //     , currentYear = currentDate.getFullYear()
+    //     , urlString = '/calendar/show?year=' + currentYear + '&month=' + currentMonth + '&filter=ME'
+    //   // $('#calendar').fullCalendar('removeEvents');
 
-      e.preventDefault();
-      history.pushState('', '', urlString);
-      $('#calendar').fullCalendar('gotoDate', currentYear, currentMonth);
-    }
+    //   e.preventDefault();
+    //   history.pushState('', '', urlString);
+    //   $('#calendar').fullCalendar('gotoDate', currentYear, currentMonth);
+    // }
+
+    $('#calendar').fullCalendar({
+    // other options here...
+
+    // events: function(start, end, callback) {
+    //     start = start.getTime()/1000;
+    //     end = end.getTime()/1000;
+    //     $.ajax({
+    //         url: '/api/events/1/?start='+ start + '&end=' + end,
+    //         dataType: 'json',
+    //         success: function(doc) {
+    //             var my_events = [];
+    //             $.each(doc.person.events, function (index, elem) {
+    //                my_events.push({
+    //                    title: elem.event.title,
+    //                    start: elem.event.start,
+    //                    end: elem.event.end,
+    //                });
+    //             });
+    //         callback(my_events);
+    //       }
+    //     });
+    //     }
+    // });
 
     var monthParam = getParameterByName('month')
       , yearParam = getParameterByName('year')
@@ -95,6 +122,20 @@ $(document).ready(function() {
     if (monthAndYearParam) {
       $('#calendar').fullCalendar('gotoDate', yearParam, monthParam);
     }
+
+    $('#calendar_filter').change(function(){
+        var calendarFilterVal = $(this).val();
+
+        var events = {
+          url: '/calendar?filter=' + calendarFilterVal,
+          type: 'GET'
+        }
+
+        $('#calendar').fullCalendar('removeEventSource', events);
+        $('#calendar').fullCalendar('addEventSource', events);
+        $('#calendar').fullCalendar('removeEvents');
+        $('#calendar').fullCalendar('rerenderEvents');
+    });
 
     $('#absence_date_from, #absence_date_to').datepicker();
 

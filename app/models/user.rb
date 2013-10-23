@@ -29,7 +29,7 @@ class User < ActiveRecord::Base
   attr_accessible :email, :password, :password_confirmation, :forename, :surname, :user_type_id, :manager_id, :invite_code, :invitation_token, :remember_me
 
   ## Scopes
-  #Includes own manager
+  #Includes self if manager
   scope :get_team_users, lambda { |manager_id| where('(manager_id = ? or users.id = ?) and confirmed_at is not null', manager_id, manager_id) }
 
   ## Instance methods

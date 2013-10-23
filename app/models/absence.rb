@@ -39,29 +39,14 @@ class Absence < ActiveRecord::Base
     self[:date_to] = (convert_uk_date_to_iso val, false)
   end
 
-  def self.team_holidays_as_json current_user, start_date, end_date
-    #TODO filter this to show all hols, by team, and by user
+  def self.team_holidays_as_json current_user, start_date, end_date, selection_type
     date_from = DateTime.parse(Time.at(start_date.to_i).to_s)
     date_to = DateTime.parse(Time.at(end_date.to_i).to_s)
 
-    holidays = self.get_team_holidays_for_dates current_user, date_from, date_to
+    holidays = self.get_team_holidays_for_dates current_user, date_from, date_to, selection_type
     bank_holidays = BankHoliday.where "date_of_hol between ? and ? ", date_from, date_to
 
     self.convert_to_json holidays, bank_holidays, current_user
-  end
-
-
-  def self.get_team_holidays_for_dates current_user, start_date, end_date
-    #Allows everyone to see everyone's holidays
-    team_users = User.all
-    #TODO filter by team
-
-    team_users_array = []
-    team_users.each do |u|
-      team_users_array << u.id
-    end
-    holidays = self.where "date_from >= ? and date_to <= ? and (user_id in(?))", start_date, end_date, team_users_array
-    holidays
   end
 
   def self.mark_as_taken current_user
@@ -77,6 +62,24 @@ class Absence < ActiveRecord::Base
   end
 
   private
+
+  def self.get_team_holidays_for_dates current_user, start_date, end_date, selection_type
+    team_user_ids = select_user_group(current_user, selection_type).map(&:id)
+    holidays = self.where "date_from >= ? and date_to <= ? and (user_id in(?))", start_date, end_date, team_user_ids
+    holidays
+  end
+
+  def self.select_user_group current_user, selection_type
+    case selection_type
+      when 'ALL'
+        return User.all
+      when 'ME'
+        User.where(:id => current_user.id)
+      else
+        # Doesn't work for managers (they see the team upwards)
+        return User.get_team_users(current_user.manager_id)        
+    end
+  end
 
   def half_days_not_on_working_days
    if date_on_non_working_day(date_from) && half_day_from != "Full Day"
@@ -123,10 +126,6 @@ class Absence < ActiveRecord::Base
     end
     json
   end
-
-  #TODO add the overlaps between team members
-  #  def intra_team_holiday_clashes
-  #  end
 
   def date_from_must_be_before_date_to
     errors.add(:date_from, " must be before date to.") if date_from > date_to
