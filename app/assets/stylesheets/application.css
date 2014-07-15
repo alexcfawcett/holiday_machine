@@ -10,8 +10,5 @@
  *
  *= require_self
  *= require_tree .
- *= require fullcalendar
- *= require reveal
- *= require jquery.ui.all
- *= require main
+ *= require custom.css.scss
  */
