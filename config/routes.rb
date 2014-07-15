@@ -9,7 +9,8 @@ HolidayMachine::Application.routes.draw do
   match 'administer/get_team_data' => 'administer#get_team_data'
   match 'administer/create' => 'administer#create'
   resources :administer
-  devise_for :users, :admin
+  devise_for :admin
+  devise_for :users, :controllers => {:registrations => "registrations"}
   resources :home, :only => :index
   resources :admins, :only => :index
   resources :reports, :only => :index

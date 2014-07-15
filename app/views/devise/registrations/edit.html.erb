@@ -1,23 +1,24 @@
 <h1>Edit your settings</h1>
 
 <%= simple_form_for(resource, :as => resource_name, :url => registration_path(resource_name), :html => { :method => :put }) do |f| %>
-  <%= devise_error_messages! %>
-  <%= f.input :email %>
-  <%= f.input :password %>
-  <%= f.input :password_confirmation %>
-  <%= f.input :current_password, :hint => 'We need your current password to confirm your changes' %>
-  <%= f.input :forename %>
-  <%= f.input :surname %>
-  <%= f.input :manager_id, :as => :select, :collection => User.where("user_type_id = 2"), :label_method => :full_name, :value_method => :id, :prompt => "Choose a manager" %>
+    <%= devise_error_messages! %>
+    <%= f.input :email %>
+    <%= f.input :forename %>
+    <%= f.input :surname %>
+    <%= f.input :manager_id, :as => :select, :collection => User.where("user_type_id = 2"), :label_method => :full_name, :value_method => :id, :prompt => "Choose a manager" %>
+    <br />
+    <%= f.input :password,  label: 'New password' %>
+    <%= f.input :password_confirmation, label: 'New password confirmation'%>
+    <%= f.input :current_password %>
 
-  <div class="well">
-    <%= f.button :submit, "Save", :class => 'btn primary' %>
-    <%= link_to 'Cancel', :back, :class => 'btn' %>
-  </div>
+    <div class="well">
+      <%= f.button :submit, "Save", :class => 'btn primary' %>
+      <%= link_to 'Cancel', :back, :class => 'btn' %>
+    </div>
 <% end %>
 
 
 <%= content_for :sidebar do %>
-  <h3>Cancel my account</h3>
-  <p>Unhappy? <%= link_to "Cancel my account", registration_path(resource_name), :confirm => "Are you sure?", :method => :delete %></p>
+    <h3>Cancel my account</h3>
+    <p>Unhappy? <%= link_to "Cancel my account", registration_path(resource_name), :confirm => "Are you sure?", :method => :delete %></p>
 <% end %>
