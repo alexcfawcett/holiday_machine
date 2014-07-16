@@ -13,6 +13,7 @@ HolidayMachine::Application.configure do
   config.consider_all_requests_local       = true
   config.action_controller.perform_caching = false
 
+  config.action_mailer.default_url_options = { :host => 'localhost' }
   config.action_mailer.smtp_settings = {
   :address              => "smtp.gmail.com",
   :port                 => 587,
