@@ -1,11 +1,11 @@
-# require 'spec_helper'
-# require 'ruby-debug'
+require 'spec_helper'
 
 describe HolidayStatus do
-  pending "add some examples to (or delete) #{__FILE__}"
-  
-  it "should return true" do
-    p "hello"
-    true
+  describe :validations do
+    it { should validate_presence_of(:status) }
+  end
+
+  describe :security do
+    it { should allow_mass_assignment_of(:status) }
   end
 end

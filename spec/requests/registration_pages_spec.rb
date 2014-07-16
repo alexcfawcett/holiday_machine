@@ -31,7 +31,10 @@ describe "User pages" do
         fill_in "Forename",      with: "Foo"
         fill_in "Surname", with: "Bar"
         #fill_in "user_user_type_id", with: "Manager"
-        page.select('2', from: 'User type')
+
+        #save_and_open_page
+        page.select('2', from: 'UserType[user_type]')
+
         fill_in "Invite code", with: "sage001nvite"
         fill_in "Manager", with: "foobar"
       end
