@@ -4,21 +4,16 @@
 <div class="row">
   <div class="span6 offset3">
     <%= simple_form_for(resource, :as => resource_name, :url => registration_path(resource_name)) do |f| %>
-        <%= devise_error_messages! %>
-        <%= f.input :email %>
-        <%= f.input :password %>
-        <%= f.input :password_confirmation %>
+        <%#= devise_error_messages! %>
+        <%= f.error_notification %>
+        <%= f.input :email, :required => true, :autofocus => true %>
+        <%= f.input :password, :required => true %>
+        <%= f.input :password_confirmation, :required => true %>
         <%= f.input :forename %>
         <%= f.input :surname %>
         <%= f.input :invite_code %>
-        <%#= f.association :user_type, :collection => UserType.all, :prompt => "Choose a user type" %>
-        <%#= f.input :manager_id, :as => :select, :collection => User.where("user_type_id = 2"),
-        :label_method => :full_name, :value_method => :id, :prompt => "Choose a manager" %>
-
-
-        <%= collection_select(:UserType, :user_type, UserType.all, :id, :name, prompt: true) %>
-
-
+        <%= f.association :user_type, :collection => UserType.all, :prompt => "Choose a user type" %>
+        <%= f.input :manager_id, :as => :select, :collection => User.where("user_type_id = 2"), :label_method => :full_name, :value_method => :id, :prompt => "Choose a manager" %>
         <%= f.button :submit, "Create my account", class: "btn btn-large btn-primary" %>
 
     <% end %>

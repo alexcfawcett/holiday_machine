@@ -17,8 +17,8 @@ HolidayMachine::Application.routes.draw do
   get "info/registration_message"
 
 
-  devise_for :admin, :users
-
+  devise_for :admin
+  devise_for :users, :controllers => {:registrations => "registrations"}
   devise_scope :user do
     get "sign_in", to: "devise/sessions#new"
     get "register", to: "devise_invitable/registrations#new"
