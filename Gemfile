@@ -48,4 +48,6 @@ group :development, :test do
   gem 'sqlite3'
   gem 'thin'
   gem 'capybara', '2.1.0'
+  gem 'launchy'
+  gem 'shoulda-matchers'
 end
