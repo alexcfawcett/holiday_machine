@@ -46,9 +46,11 @@ class User < ActiveRecord::Base
   end
 
   def get_holiday_allowance_for_selected_year year
-    UserDaysForYear.where("user_id = ? and holiday_year_id = ?", self.id, year.id).first
+    user_holiday_year = UserDaysForYear.where("user_id = ? and holiday_year_id = ?", self.id,year.id).first
+    user_holiday_year.days_remaining
   end
 
+  # Change (or remove) this to use above method
   def get_holiday_allowance #For current year
     today = Date.today
     holiday_year = HolidayYear.where('date_start<=? and date_end>=?', today, today).first
@@ -58,11 +60,11 @@ class User < ActiveRecord::Base
 
   def create_allowance
     today = Date.today
+    base_holiday_allowance = 25
+
     holiday_years = HolidayYear.all
     holiday_years.each do |year|
-      days_allowed = UserDaysForYear.new(:user_id => self.id, :holiday_year_id => year.id)
-      days_allowed.days_remaining=25
-      days_allowed.save
+      UserDaysForYear.create(user_id: self.id, holiday_year_id: year.id, days_remaining: base_holiday_allowance)
     end
   end
 

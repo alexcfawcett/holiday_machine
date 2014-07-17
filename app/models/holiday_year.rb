@@ -1,7 +1,7 @@
 class HolidayYear < ActiveRecord::Base
 
-  validates :date_start, :date_end, presence: true
-  attr_accessible :date_end, :date_start
+  validates :date_start, :date_end, :description, presence: true
+  attr_accessible :date_end, :date_start, :description
 
   ## Associations
   has_many :absences
