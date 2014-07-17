@@ -1,11 +1,11 @@
 class User < ActiveRecord::Base
 
   devise :invitable, :database_authenticatable, :confirmable, :lockable, :recoverable,
-    :registerable, :trackable, :timeoutable, :validatable,
-    :token_authenticatable
+    :registerable, :trackable, :timeoutable, :validatable
 
   ## Callbacks
   before_update :add_inviting_manager
+  before_save :ensure_authentication_token
   after_create :create_allowance
   after_destroy :delete_all_allowances
 
@@ -91,4 +91,21 @@ class User < ActiveRecord::Base
     return all.flatten
   end
 
+
+  # Safe Token Authentication
+  # https://gist.github.com/josevalim/fb706b1e933ef01e4fb6
+  def ensure_authentication_token
+    if authentication_token.blank?
+      self.authentication_token = generate_authentication_token
+    end
+  end
+
+  private
+
+  def generate_authentication_token
+    loop do
+      token = Devise.friendly_token
+      break token unless User.where(authentication_token: token).first
+    end
+  end
 end
