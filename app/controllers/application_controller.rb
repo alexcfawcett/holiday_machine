@@ -42,7 +42,15 @@ class ApplicationController < ActionController::Base
     redirect_to root_path unless current_user.user_type.name == 'Manager'
   end
 
+  # Rails 4 Strong Parameters
   def configure_permitted_parameters
-    devise_parameter_sanitizer.for(:sign_up) { |u| u.permit( :email, :password, :password_confirmation, :forename, :surname, :user_type_id, :manager_id, :invite_code, :invitation_token, :remember_me) }
+    devise_parameter_sanitizer.for(:sign_up) { |u| u.permit( :email, :password, :password_confirmation,
+                                                             :forename, :surname, :user_type_id, :manager_id,
+                                                             :invite_code, :invitation_token, :remember_me) }
+
+    devise_parameter_sanitizer.for(:account_update) { |u| u.permit( :email,:forename, :surname, :manager_id,
+                                                                    :password, :password_confirmation,
+                                                                    :current_password) }
+
   end
 end
