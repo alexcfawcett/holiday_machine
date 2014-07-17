@@ -142,3 +142,72 @@ input {
   @extend .control-group;
   @extend .error;
 }
+
+/* user-info */
+/* TODO: Tidy this up. Must be able to make this cleaner? */
+
+/* line 476, sass/application.scss */
+#user-info {
+  padding: 10px;
+  background-color: #f5f5f5;
+  background-repeat: repeat-x;
+  background-image: -khtml-gradient(linear, left top, left bottom, from(#f9f9f9), to(#f5f5f5));
+  background-image: -moz-linear-gradient(#f9f9f9, #f5f5f5);
+  background-image: -ms-linear-gradient(#f9f9f9, #f5f5f5);
+  background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #f9f9f9), color-stop(100%, #f5f5f5));
+  background-image: -webkit-linear-gradient(#f9f9f9, #f5f5f5);
+  background-image: -o-linear-gradient(#f9f9f9, #f5f5f5);
+  -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr='#f9f9f9', endColorstr='#f5f5f5', GradientType=0)";
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#f9f9f9', endColorstr='#f5f5f5', GradientType=0);
+  background-image: linear-gradient(#f9f9f9, #f5f5f5);
+  border: 1px solid #eee;
+  -moz-border-radius: 4px;
+  -webkit-border-radius: 4px;
+  -o-border-radius: 4px;
+  -ms-border-radius: 4px;
+  -khtml-border-radius: 4px;
+  border-radius: 4px;
+  overflow: hidden;
+  *zoom: 1;
+}
+/* line 491, sass/application.scss */
+#user-info h3 {
+  margin-top: 0;
+}
+/* line 492, sass/application.scss */
+#user-info .gravatar-wrapper {
+  display: inline;
+  float: left;
+  margin-right: 10px;
+  width: 70px;
+}
+/* line 147, ../../../../.rvm/gems/ruby-1.9.3-p194/gems/compass-0.11.5/frameworks/blueprint/stylesheets/blueprint/_grid.scss */
+* html #user-info .gravatar-wrapper {
+  overflow-x: hidden;
+}
+/* line 495, sass/application.scss */
+#user-info .user-info-wrapper {
+  display: inline;
+  float: left;
+  margin-right: 0;
+  width: 470px;
+}
+/* line 147, ../../../../.rvm/gems/ruby-1.9.3-p194/gems/compass-0.11.5/frameworks/blueprint/stylesheets/blueprint/_grid.scss */
+* html #user-info .user-info-wrapper {
+  overflow-x: hidden;
+}
+/* line 503, sass/application.scss */
+#user-info form label,
+#user-info form select,
+#user-info form #days-remaining-wrapper {
+  display: inline;
+  float: left;
+  line-height: 25px;
+  margin-right: 10px;
+}
+/* line 507, sass/application.scss */
+#user-info form label span,
+#user-info form select span,
+#user-info form #days-remaining-wrapper span {
+  font-weight: bold;
+}

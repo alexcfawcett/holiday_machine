@@ -13,7 +13,7 @@ class AbsencesController < ApplicationController
     @absence.holiday_year_id = HolidayYear.current_year.id
 
     @holiday_statuses = HolidayStatus.pending_only
-=begin
+
     if params[:holiday_year_id]
       user_days_per_year = UserDaysForYear.where(:user_id=> current_user.id, :holiday_year_id=>params[:holiday_year_id]).first
       @days_remaining = user_days_per_year.days_remaining
@@ -30,8 +30,6 @@ class AbsencesController < ApplicationController
       format.js
       format.html
     end
-
-=end
   end
 
   # GET /vacations/1
