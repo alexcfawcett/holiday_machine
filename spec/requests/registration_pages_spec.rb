@@ -63,7 +63,7 @@ describe "User pages" do
           click_button "Save changes"
         end
 
-        it { should have_selector('h3', text: "Hello #{new_forename}") }
+        it { should have_selector('h3', text: "#{new_forename} #{user.surname}") }
         it { should have_selector('div.alert.alert', text: I18n.t('devise.registrations.updated')) }
         it { should have_link('Sign out', href: sign_out_path) }
         specify { expect(user.reload.forename).to  eq new_forename }
@@ -89,7 +89,12 @@ describe "User pages" do
           end
           it { should have_selector('div.alert.alert', text: I18n.t('devise.registrations.updated')) }
           # This fails but saving seems to work in dev
-          specify { expect(user.reload.password).to  eq new_password }
+          # TODO: Fix this test
+          #specify { expect(user).to change(password).to  new_password }
+          it '' do
+            user.reload
+            user.password.should == new_password
+          end
         end
       end
     end

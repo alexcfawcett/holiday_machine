@@ -37,6 +37,11 @@ class User < ActiveRecord::Base
     self[:forename] + " " + self[:surname]
   end
 
+  def holidays_left year
+    user_days_for_years.find_by_holiday_year_id(year.id).days_remaining
+  end
+
+
   def get_holiday_allowance_for_dates date_from, date_to
     holiday_year = HolidayYear.where('date_start<=? and date_end>=?', date_from, date_to).first
     unless holiday_year.nil? #If a holiday isn't in a year( maybe straddles year) then returns nil

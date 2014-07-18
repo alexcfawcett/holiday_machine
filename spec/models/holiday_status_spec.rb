@@ -1,11 +1,16 @@
 require 'spec_helper'
 
 describe HolidayStatus do
-  describe :validations do
-    it { should validate_presence_of(:status) }
-  end
 
-  describe :security do
-    it { should allow_mass_assignment_of(:status) }
+  before {@status = HolidayStatus.new(status: "Pending")}
+
+  subject { @status }
+
+  it { should be_valid }
+
+  context 'after creation' do
+    before do
+      subject.save!
+    end
   end
 end

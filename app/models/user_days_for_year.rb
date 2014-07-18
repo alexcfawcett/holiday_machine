@@ -5,4 +5,5 @@ class UserDaysForYear < ActiveRecord::Base
 
   validates :user_id, :holiday_year_id, :days_remaining, presence: true
   attr_accessible :user_id, :holiday_year_id, :days_remaining
+
 end

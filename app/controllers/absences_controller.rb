@@ -21,9 +21,14 @@ class AbsencesController < ApplicationController
       @holidays = Absence.user_holidays(current_user.id).per_holiday_year(params[:holiday_year_id]).where("absence_type_id = 1")
       @other_absences = Absence.user_holidays(current_user.id).per_holiday_year(params[:holiday_year_id]).where("absence_type_id != 1")
     else
-      @days_remaining = current_user.get_holiday_allowance.days_remaining
-      @holidays = Absence.user_holidays(current_user.id).per_holiday_year(@absence.holiday_year_id).where("absence_type_id = 1")
-      @other_absences = Absence.user_holidays(current_user.id).per_holiday_year(@absence.holiday_year_id).where("absence_type_id != 1")
+      # Change default to last (most recent)
+      @days_remaining = current_user.holidays_left(HolidayYear.first)
+      @holidays = current_user.absences
+      # TODO: Replace these with real data. Find or create queries. I.e user.team_holidays.. find manager then get
+      # all of his users. get there holidays then filter with only active
+      @active_team_holidays = current_user.absences
+      @upcoming_team_holidays = current_user.absences
+
     end
 
     respond_to do |format|

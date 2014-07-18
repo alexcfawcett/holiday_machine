@@ -1,35 +1,38 @@
 class Absence < ActiveRecord::Base
 
+  attr_accessible :date_from, :date_to, :description, :holiday_status_id, :user_id, :absence_type_id
+  attr_accessor :half_day_from, :half_day_to
+
   HOL_COLOURS = %W{#FDF5D9 #D1EED1 #FDDFDE #DDF4Fb}
   BORDER_COLOURS = %W{#FCEEC1 #BFE7Bf #FBC7C6 #C6EDF9}
-  
+
+  # Associations
   belongs_to :holiday_status
   belongs_to :holiday_year
   belongs_to :user
   belongs_to :absence_type
 
-  before_save :set_half_days, :set_working_days
-  before_destroy :check_if_holiday_has_passed
+  # Validation
+ validates :date_from, :date_to, :description, :holiday_status_id, :user_id, :absence_type_id, presence: true
+ validate :holiday_must_not_straddle_holiday_years
+ validate :half_days_not_on_working_days, :on => :create
+ validate :dont_exceed_days_remaining, :on => :create
+ validate :date_from_must_be_before_date_to
+ validate :working_days_greater_than_zero
+ #validate :no_overlapping_holidays, :on => :create
 
-  after_destroy :add_days_remaining
-  after_create :decrease_days_remaining
+  # Callbacks
+  # TODO re-implement these
+ #before_save :set_half_days, :set_working_days
+ before_save :set_working_days
+ after_create :decrease_days_remaining
+ before_destroy :check_if_holiday_has_passed
+ after_destroy :add_days_remaining
 
+  # Scopes
   scope :team_holidays, lambda { |manager_id| where(:manager_id => manager_id) }
   scope :user_holidays, lambda { |user_id| where(:user_id => user_id).order('date_from ASC') }
   scope :per_holiday_year, lambda { |holiday_year_id| where(:holiday_year_id => holiday_year_id) }
-
-  validates_presence_of :date_from
-  validates_presence_of :date_to
-  validates_presence_of :description
-
-  validate :holiday_must_not_straddle_holiday_years
-  validate :half_days_not_on_working_days, :on => :create
-  validate :dont_exceed_days_remaining, :on => :create
-  validate :date_from_must_be_before_date_to
-  validate :working_days_greater_than_zero
-  validate :no_overlapping_holidays, :on => :create
-
-  attr_accessor :half_day_from, :half_day_to
 
   def date_from= val
     self[:date_from] = (convert_uk_date_to_iso val, true)
@@ -82,6 +85,8 @@ class Absence < ActiveRecord::Base
   end
 
   def half_days_not_on_working_days
+    return if date_from.nil?
+
    if date_on_non_working_day(date_from) && half_day_from != "Full Day"
      errors.add(:date_from, "- your half day falls on a non-working day")
      false
@@ -128,6 +133,7 @@ class Absence < ActiveRecord::Base
   end
 
   def date_from_must_be_before_date_to
+    return false if date_from.nil? || date_to.nil?
     errors.add(:date_from, " must be before date to.") if date_from > date_to
   end
 
@@ -137,6 +143,8 @@ class Absence < ActiveRecord::Base
   end
 
   def holiday_must_not_straddle_holiday_years
+    puts ' ONE OR MORE DATES WHERE NIL' if date_to.nil? || date_from.nil?
+
     number_years = HolidayYear.holiday_years_containing_holiday(date_from, date_to).count
     errors.add(:base, "Holiday must not cross years") if number_years> 1
   end
@@ -200,6 +208,12 @@ class Absence < ActiveRecord::Base
   end
 
   def dont_exceed_days_remaining
+    if user.nil?
+      puts 'User id was invalid'
+      errors.add(:user_id, "-User is invalid")
+      return
+    end
+
     return unless self.absence_type_id == 1 #Only holidays affect the days remaining
     holiday_allowance = self.user.get_holiday_allowance_for_dates self.date_from, self.date_to
     if holiday_allowance == 0 or holiday_allowance.nil? then
@@ -208,6 +222,7 @@ class Absence < ActiveRecord::Base
     errors.add(:working_days_used, "-Number of days selected exceeds your allowance!") if holiday_allowance.days_remaining < business_days_between
   end
 
+  # TODO: This currently does not work
   def set_half_days
     if date_from.to_date == date_to.to_date
       #Ensure the half days match
