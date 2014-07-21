@@ -20,8 +20,7 @@ describe "User pages" do
 
         it { should have_title('Sign up') }
 
-        it { should have_selector('div.alert.alert-error',
-                                  text: I18n.t('simple_form.error_notification.default_message')) }
+        it { should have_selector('div.alert.alert-error')}
       end
     end
 
@@ -78,8 +77,7 @@ describe "User pages" do
 
         context "without supplying a current password" do
           before {click_button "Save changes" }
-          it { should have_selector('div.alert.alert-error',
-                                    text: I18n.t('simple_form.error_notification.default_message')) }
+          it { should have_selector('div.alert.alert-error') }
         end
 
         context "with supplying a current password" do
@@ -88,10 +86,11 @@ describe "User pages" do
             click_button "Save changes"
           end
           it { should have_selector('div.alert.alert', text: I18n.t('devise.registrations.updated')) }
+
           # This fails but saving seems to work in dev
           # TODO: Fix this test
           #specify { expect(user).to change(password).to  new_password }
-          it '' do
+          it 'should save the users new password' do
             user.reload
             user.password.should == new_password
           end

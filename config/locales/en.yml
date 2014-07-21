@@ -21,3 +21,4 @@
 
 en:
   app_url: "http://holiday-machine.herokuapp.com"
+  absence_created: "Leave created!"

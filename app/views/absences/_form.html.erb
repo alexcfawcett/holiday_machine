@@ -1,4 +1,7 @@
-<%= simple_form_for(@absence, :remote => true, :validate => true) do |f| %>
+<%= simple_form_for(@absence) do |f| %>
+  <%#= f.error_notification %>
+  <%= render 'shared/error_messages', object: f.object %>
+
   <%= f.input :holiday_year_id, :as => :hidden %>
   <%= f.input :date_from, :as => :string, :input_html => { :value => Date.today.strftime("%d/%m/%Y") }  %>
   <%= f.input :half_day_from, :collection=>["Full Day", "Half Day AM", "Half Day PM"], :include_blank => false, :label=> false %>

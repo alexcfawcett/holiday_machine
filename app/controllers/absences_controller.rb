@@ -5,36 +5,10 @@ class AbsencesController < ApplicationController
   # GET /vacations
   def index
 
-    @holidays ||= []
-    
-    @other_absences ||= []
-
-    @absence = Absence.new
+    load_data
+    @absence = current_user.absences.build
     @absence.holiday_year_id = HolidayYear.current_year.id
 
-    @holiday_statuses = HolidayStatus.pending_only
-
-    if params[:holiday_year_id]
-      user_days_per_year = UserDaysForYear.where(:user_id=> current_user.id, :holiday_year_id=>params[:holiday_year_id]).first
-      @days_remaining = user_days_per_year.days_remaining
-      
-      @holidays = Absence.user_holidays(current_user.id).per_holiday_year(params[:holiday_year_id]).where("absence_type_id = 1")
-      @other_absences = Absence.user_holidays(current_user.id).per_holiday_year(params[:holiday_year_id]).where("absence_type_id != 1")
-    else
-      # Change default to last (most recent)
-      @days_remaining = current_user.holidays_left(HolidayYear.first)
-      @holidays = current_user.absences
-      # TODO: Replace these with real data. Find or create queries. I.e user.team_holidays.. find manager then get
-      # all of his users. get there holidays then filter with only active
-      @active_team_holidays = current_user.absences
-      @upcoming_team_holidays = current_user.absences
-
-    end
-
-    respond_to do |format|
-      format.js
-      format.html
-    end
   end
 
   # GET /vacations/1
@@ -59,9 +33,21 @@ class AbsencesController < ApplicationController
     @absence.holiday_year_id = nil #THIS MUST BE REMOVED OR WILL BE PASSED FROM THE FILTER
     @absence.user = current_user
     @absence.holiday_status_id = 1
-    manager_id = current_user.manager_id
-    manager = User.find_by_id(manager_id)
+    #manager_id = current_user.manager_id
+    #manager = User.find_by_id(manager_id)
 
+
+
+    if @absence.save
+      flash[:success] = I18n.t('absence_created')
+      redirect_to absences_path
+    else
+      load_data
+      render 'index'
+    end
+
+
+=begin
     # respond_to do |format|
       if @absence.save
         unless manager.nil?
@@ -80,6 +66,7 @@ class AbsencesController < ApplicationController
         # format.js
       end
     # end
+=end
   end
 
   def update
@@ -132,4 +119,27 @@ class AbsencesController < ApplicationController
     end
   end
 
+  private
+  def load_data
+    @holidays ||= []
+    @other_absences ||= []
+    @holiday_statuses = HolidayStatus.pending_only
+
+    if params[:holiday_year_id]
+      user_days_per_year = UserDaysForYear.where(:user_id=> current_user.id, :holiday_year_id=>params[:holiday_year_id]).first
+      @days_remaining = user_days_per_year.days_remaining
+
+      @holidays = Absence.user_holidays(current_user.id).per_holiday_year(params[:holiday_year_id]).where("absence_type_id = 1")
+      @other_absences = Absence.user_holidays(current_user.id).per_holiday_year(params[:holiday_year_id]).where("absence_type_id != 1")
+    else
+      # Change default to last (most recent)
+      @days_remaining = current_user.holidays_left(HolidayYear.first)
+      @holidays = current_user.absences
+      # TODO: Replace these with real data. Find or create queries. I.e user.team_holidays.. find manager then get
+      # all of his users. get there holidays then filter with only active
+      @active_team_holidays = current_user.absences
+      @upcoming_team_holidays = current_user.absences
+
+    end
+  end
 end

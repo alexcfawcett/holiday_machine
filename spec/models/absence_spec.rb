@@ -35,6 +35,17 @@ describe Absence do
       end
     end
 
+    context 'if a user provides invalid dates' do
+      before do
+        @absence = Absence.new(date_from: "", date_to: "24/10/2014", description: "Test Holiday description",
+                                  holiday_status_id: 1, absence_type_id: 1, user_id: @user.id)
+      end
+
+      it "should not be valid" do
+        @absence.should_not be_valid
+      end
+    end
+
   end
 
   context 'after creation' do

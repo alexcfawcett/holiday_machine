@@ -138,6 +138,8 @@ class Absence < ActiveRecord::Base
   end
 
   def working_days_greater_than_zero
+    return false if date_from.nil? || date_to.nil?
+
     @working_days = business_days_between
     errors.add(:working_days_used, " - This holiday request uses no working days") if @working_days==0
   end
@@ -161,6 +163,11 @@ class Absence < ActiveRecord::Base
   end
 
   def convert_uk_date_to_iso date_str, is_date_from
+    if date_str.length != 10
+      errors.add(:date, "Invalid date format.")
+      return nil
+    end
+
     split_date=date_str.split("/")
     if is_date_from
       DateTime.new(split_date[2].to_i, split_date[1].to_i, split_date[0].to_i, 9)
