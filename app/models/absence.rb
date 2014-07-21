@@ -19,7 +19,7 @@ class Absence < ActiveRecord::Base
  validate :dont_exceed_days_remaining, :on => :create
  validate :date_from_must_be_before_date_to
  validate :working_days_greater_than_zero
- #validate :no_overlapping_holidays, :on => :create
+ validate :no_overlapping_holidays, :on => :create
 
   # Callbacks
   # TODO re-implement these
@@ -143,14 +143,14 @@ class Absence < ActiveRecord::Base
   end
 
   def holiday_must_not_straddle_holiday_years
-    puts ' ONE OR MORE DATES WHERE NIL' if date_to.nil? || date_from.nil?
+    #puts ' ONE OR MORE DATES WHERE NIL' if date_to.nil? || date_from.nil?
 
     number_years = HolidayYear.holiday_years_containing_holiday(date_from, date_to).count
     errors.add(:base, "Holiday must not cross years") if number_years> 1
   end
 
   def no_overlapping_holidays
-    absences = Absence.find_all_by_user_id(self.user_id)
+    absences = Absence.where(user_id: self.user_id)
     absences.each do |absence|
       errors.add(:base, "Some leave already exists within this date range") if overlaps?(absence)
     end
@@ -209,8 +209,7 @@ class Absence < ActiveRecord::Base
 
   def dont_exceed_days_remaining
     if user.nil?
-      puts 'User id was invalid'
-      errors.add(:user_id, "-User is invalid")
+      errors.add(:user_id, "is invalid")
       return
     end
 

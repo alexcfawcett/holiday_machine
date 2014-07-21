@@ -7,16 +7,16 @@ class User < ActiveRecord::Base
   before_update :add_inviting_manager
   before_save :ensure_authentication_token
   after_create :create_allowance
-  after_destroy :delete_all_allowances
+  #after_destroy :delete_all_allowances
 
   ## Associations
   belongs_to :manager, :class_name => 'User', :foreign_key => 'manager_id'
   has_many :employees, :class_name => 'User', :foreign_key => "manager_id"
 
   belongs_to :user_type
-  has_many :user_days
-  has_many :absences
-  has_many :user_days_for_years
+  has_many :user_days, dependent: :destroy
+  has_many :absences, dependent: :destroy
+  has_many :user_days_for_years, dependent: :destroy
 
   ## Validations
   validates_presence_of :email, :forename, :surname, :user_type
@@ -71,10 +71,6 @@ class User < ActiveRecord::Base
     holiday_years.each do |year|
       UserDaysForYear.create(user_id: self.id, holiday_year_id: year.id, days_remaining: base_holiday_allowance)
     end
-  end
-
-  def delete_all_allowances
-    UserDaysForYear.destroy(:user_id => self.id)
   end
 
   def user_days_for_selected_year year
