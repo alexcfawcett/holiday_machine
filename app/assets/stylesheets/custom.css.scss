@@ -211,3 +211,50 @@ input {
 #user-info form #days-remaining-wrapper span {
   font-weight: bold;
 }
+
+/* line 273, sass/application.scss */
+table {
+  width: 100%;
+  margin-bottom: 18px;
+  padding: 0;
+  font-size: 13px;
+  border-collapse: collapse;
+  border: 1px solid #ddd;
+}
+/* line 281, sass/application.scss */
+table th,
+table td {
+  padding: 10px 10px 9px;
+  line-height: 18px;
+  text-align: left;
+}
+/* line 286, sass/application.scss */
+table th {
+  padding-top: 9px;
+  font-weight: bold;
+  vertical-align: middle;
+}
+/* line 291, sass/application.scss */
+table td {
+  vertical-align: top;
+  border-top: 1px solid #ddd;
+}
+/* line 294, sass/application.scss */
+table td.actions a {
+  margin-right: 10px;
+}
+/* line 298, sass/application.scss */
+table tbody th {
+  border-top: 1px solid #ddd;
+  vertical-align: top;
+}
+/* line 303, sass/application.scss */
+table tbody tr:nth-child(odd) td,
+table tbody tr:nth-child(odd) th {
+  background-color: #f9f9f9;
+}
+/* line 307, sass/application.scss */
+table tbody tr:hover td,
+table tbody tr:hover th {
+  background-color: #f5f5f5;
+}

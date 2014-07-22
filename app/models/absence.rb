@@ -29,10 +29,22 @@ class Absence < ActiveRecord::Base
  before_destroy :check_if_holiday_has_passed
  after_destroy :add_days_remaining
 
-  # Scopes
+  # Scopes - Are these 3 still used?
   scope :team_holidays, lambda { |manager_id| where(:manager_id => manager_id) }
   scope :user_holidays, lambda { |user_id| where(:user_id => user_id).order('date_from ASC') }
   scope :per_holiday_year, lambda { |holiday_year_id| where(:holiday_year_id => holiday_year_id) }
+
+  scope :active_team_holidays, lambda { |manager_id| where(user_id: User.get_team_users(manager_id)).
+                                        where("? BETWEEN date_from AND date_to",DateTime.now).
+                                        order('date_from ASC') }
+
+  scope :upcoming_team_holidays, lambda { |manager_id| where(user_id: User.get_team_users(manager_id)).
+                                          where("date_from BETWEEN ? AND ?", DateTime.now, DateTime.now + 1.weeks).
+                                          order('date_from ASC') }
+
+  scope :user_holidays_in_year, lambda { |user, holiday_year_id| where(holiday_year_id: holiday_year_id).
+                                          where(user_id: user.id).order('date_from ASC')  }
+
 
   def date_from= val
     self[:date_from] = (convert_uk_date_to_iso val, true)

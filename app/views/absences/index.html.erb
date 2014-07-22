@@ -19,18 +19,26 @@
       <div class="span6">
         <h3>Active Team Holidays</h3>
         <% if @active_team_holidays.any? %>
-            <ol class="active_team_holidays">
+            <ul class="active_team_holidays">
               <% @active_team_holidays.each do |holiday| %>
-                  <li><%= holiday.user.forename %> ~ <%= pluralize(5, 'day')%> left</li>
+                  <li><%= holiday.user.forename %></li>
               <% end %>
-            </ol>
+            </ul>
         <% else %>
             <p>There are no active team holidays.</p>
         <% end %>
       </div>
       <div class="span6">
         <h3>Upcoming Team Holidays</h3>
-        <p>There are no upcoming team holidays.</p>
+        <% if @upcoming_team_holidays.any? %>
+            <ul class="upcoming_team_holidays">
+              <% @upcoming_team_holidays.each do |holiday| %>
+                  <li><%= holiday.user.forename %></li>
+              <% end %>
+            </ul>
+        <% else %>
+            <p>There are no upcoming team holidays.</p>
+        <% end %>
       </div>
     </div>
   </aside>
