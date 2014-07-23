@@ -22,7 +22,7 @@ gem 'sprockets-rails'
 # ###########################
 
 gem 'jquery-rails'
-#gem 'jquery-ui-rails'
+gem 'jquery-ui-rails'
 gem 'turbolinks'
 gem 'fullcalendar-rails'
 gem 'less-rails'
