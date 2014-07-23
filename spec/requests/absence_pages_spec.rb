@@ -47,18 +47,22 @@ describe "Absence pages" do
     end
   end
 
+  describe "days remaining widget" do
 
-=begin
-  describe "micropost destruction" do
-    before { FactoryGirl.create(:micropost, user: user) }
-
-    describe "as correct user" do
-      before { visit root_path }
-
-      it "should delete a micropost" do
-        expect { click_link "delete" }.to change(Micropost, :count).by(-1)
-      end
+    context 'default' do
+      it { should have_selector('span', text: '25') }
     end
+
+    context 'changed year' do
+      let!(:absence) {Absence.create!(date_from: "23/07/2015", date_to: "23/07/2015",
+                                    description: "Test description", holiday_status_id: 1, absence_type_id: 1,
+                                    user_id: user.id)}
+
+      before {page.select('Oct 2015 to Sept 2016', from: 'holiday_year[id]') }
+
+      # TODO: Fix this test. Testing a AJAX function (which works)
+      it { should have_selector('span', text: '24') }
+    end
+
   end
-=end
 end

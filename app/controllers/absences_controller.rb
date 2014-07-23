@@ -9,6 +9,11 @@ class AbsencesController < ApplicationController
     @absence = current_user.absences.build
     @absence.holiday_year_id = HolidayYear.current_year.id
 
+    respond_to do |format|
+      format.js
+      format.html
+    end
+
   end
 
   # GET /vacations/1
@@ -100,16 +105,17 @@ class AbsencesController < ApplicationController
 
   private
   def load_data
+    # TODO: Add validation. Will fall down if invalid id is supplied
     if params[:holiday_year_id]
-      user_days_per_year = UserDaysForYear.where(:user_id=> current_user.id, :holiday_year_id=>params[:holiday_year_id]).first
-      @days_remaining = user_days_per_year.days_remaining
+      holiday_year = HolidayYear.find(params[:holiday_year_id])
+      @days_remaining = current_user.holidays_left(holiday_year)
+      @holidays = Absence.user_holidays_in_year(current_user, holiday_year)
     else
-      # Change default to last (most recent)
-      @days_remaining = current_user.holidays_left(HolidayYear.first)
+      @days_remaining = current_user.holidays_left(HolidayYear.current_year)
+      @holidays = Absence.user_holidays_in_year(current_user, HolidayYear.current_year)
     end
 
-    # Move this into if statement to change when user picks different year
-    @holidays = Absence.user_holidays_in_year(current_user, HolidayYear.first.id)
+    # Not effected by year dropdown
     @active_team_holidays = Absence.active_team_holidays(current_user.manager_id)
     @upcoming_team_holidays = Absence.upcoming_team_holidays(current_user)
 

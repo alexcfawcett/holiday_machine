@@ -1,0 +1,41 @@
+
+$(function() {
+    // Initialise datepickers for absence form
+    initDatePickers();
+
+    $("#holiday_year_id").change(function() {
+        $("#absence_holiday_year_id").val($(this).val());
+        $.ajax({
+            type: 'GET',
+            data: {holiday_year_id: $(this).val()},
+            url: '/absences/'
+        });
+    });
+});
+
+
+/*
+ * Creates a datepicker UI when user clicks on date input box in the absence form.
+ * Automatically ranges, UK date format and no weekends can be selected.
+ * TODO: Could clean this up. Think DRY.
+ */
+function initDatePickers() {
+    $( "#absence_date_from" ).datepicker({
+        dateFormat: 'dd/mm/yy',
+        changeMonth: true,
+        changeYear: true,
+        beforeShowDay: $.datepicker.noWeekends,
+        onClose: function( selectedDate ) {
+            $( "#absence_date_to" ).datepicker( "option", "minDate", selectedDate );
+        }
+    });
+    $( "#absence_date_to" ).datepicker({
+        dateFormat: 'dd/mm/yy',
+        changeMonth: true,
+        changeYear: true,
+        beforeShowDay: $.datepicker.noWeekends,
+        onClose: function( selectedDate ) {
+            $( "#absence_date_from" ).datepicker( "option", "maxDate", selectedDate );
+        }
+    });
+}

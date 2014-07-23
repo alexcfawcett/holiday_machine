@@ -25,9 +25,7 @@ describe User do
 
     it 'has the correct base holiday allowance for all years' do
       HolidayYear.all.each do |year|
-        #puts "Years remaining: #{subject.holidays_left(year)}"
         subject.holidays_left(year).should ==  BigDecimal.new('25.00')
-       # expect (subject.holidays_left(year)).to eq BigDecimal.new('25.00')
       end
     end
 
