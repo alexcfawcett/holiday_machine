@@ -1,0 +1,32 @@
+
+$(function() {
+    // Initialise datepickers for absence form
+    initDatePickers()
+});
+
+
+/*
+ * Creates a datepicker UI when user clicks on date input box in the absence form.
+ * Automatically ranges, UK date format and no weekends can be selected.
+ * TODO: Could clean this up. Think DRY.
+ */
+function initDatePickers() {
+    $( "#absence_date_from" ).datepicker({
+        dateFormat: 'dd/mm/yy',
+        changeMonth: true,
+        changeYear: true,
+        beforeShowDay: $.datepicker.noWeekends,
+        onClose: function( selectedDate ) {
+            $( "#absence_date_to" ).datepicker( "option", "minDate", selectedDate );
+        }
+    });
+    $( "#absence_date_to" ).datepicker({
+        dateFormat: 'dd/mm/yy',
+        changeMonth: true,
+        changeYear: true,
+        beforeShowDay: $.datepicker.noWeekends,
+        onClose: function( selectedDate ) {
+            $( "#absence_date_from" ).datepicker( "option", "maxDate", selectedDate );
+        }
+    });
+}

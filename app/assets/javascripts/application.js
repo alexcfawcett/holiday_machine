@@ -12,6 +12,7 @@
 //
 
 //= require jquery
+//= require jquery-ui
 //= require jquery_ujs
 //= require bootstrap
 //= require turbolinks
@@ -19,7 +20,3 @@
 
 // -----------------
 //= require fullcalendar
-//= require user-days
-//= require main
-//= require administration
-//= require absences
