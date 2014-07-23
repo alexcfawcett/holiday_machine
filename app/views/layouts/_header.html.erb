@@ -4,9 +4,8 @@
       <%= link_to "Holiday Thyme", root_path, id: "logo" %>
       <nav>
         <ul class="nav pull-right">
-          <li><%= link_to "Home", root_path %></li>
-          <li><%= link_to "Help", "#" %></li>
           <% if signed_in? %>
+              <li><%= link_to "Calendar", "/calendar" %></li>
               <li><%= link_to 'My Settings', edit_user_registration_path %></li>
               <li><%= link_to "Sign out", sign_out_path, method: "delete" %></li>
           <% else %>
