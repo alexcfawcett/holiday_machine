@@ -4,7 +4,9 @@ describe "Absence pages" do
 
   subject { page }
 
+  # Have to create real test user for Selenium to login
   let(:user) { create(:user) }
+
   let(:submit) { "Add Leave" }
 
   before do
@@ -58,10 +60,12 @@ describe "Absence pages" do
                                     description: "Test description", holiday_status_id: 1, absence_type_id: 1,
                                     user_id: user.id)}
 
-      before {page.select('Oct 2015 to Sept 2016', from: 'holiday_year[id]') }
-
-      # TODO: Fix this test. Testing a AJAX function (which works)
-      it { should have_selector('span', text: '24') }
+      # Requires Firefox
+      # Check Selenium change log for supported Firefox version (Currently: 29 as of 24/07/14)
+      it 'should update days remaining span', js:true do
+        page.select('Oct 2014 to Sept 2015', from: 'holiday_year[id]')
+        page.should have_selector('span', text: '24')
+      end
     end
 
   end

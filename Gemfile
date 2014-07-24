@@ -50,4 +50,5 @@ group :development, :test do
   gem 'capybara', '2.1.0'
   gem 'launchy'
   gem 'shoulda-matchers'
+  gem 'selenium-webdriver'
 end
