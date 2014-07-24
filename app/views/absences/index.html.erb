@@ -18,8 +18,8 @@
     </div>
 
     <div class="row">
-      <div class="span6">
-        <h3>Active Team Holidays</h3>
+      <aside class="span4">
+        <h4>Active Team Holidays</h4>
         <% if @active_team_holidays.any? %>
             <ul class="active_team_holidays">
               <% @active_team_holidays.each do |holiday| %>
@@ -29,9 +29,9 @@
         <% else %>
             <p>There are no active team holidays.</p>
         <% end %>
-      </div>
-      <div class="span6">
-        <h3>Upcoming Team Holidays</h3>
+      </aside>
+      <div class="span4">
+        <h4>Upcoming Team Holidays</h4>
         <% if @upcoming_team_holidays.any? %>
             <ul class="upcoming_team_holidays">
               <% @upcoming_team_holidays.each do |holiday| %>
