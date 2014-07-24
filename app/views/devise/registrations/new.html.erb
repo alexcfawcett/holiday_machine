@@ -12,7 +12,7 @@
         <%= f.input :forename %>
         <%= f.input :surname %>
         <%= f.input :invite_code %>
-        <%= f.association :user_type, :collection => UserType.all, :prompt => "Choose a user type" %>
+        <%= f.association :user_type, :collection => UserType.all, :selected => 1 %>
         <%= f.input :manager_id, :as => :select, :collection => User.where("user_type_id = 2"), :label_method => :full_name, :value_method => :id, :prompt => "Choose a manager" %>
         <%= f.button :submit, "Create my account", class: "btn btn-large btn-primary" %>
 
