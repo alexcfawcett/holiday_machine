@@ -31,8 +31,7 @@ Requirements
 
 Todo 
 -------------
-* Managers should be able to change status of team members absences.
-* Managers should be able to add holiday allowance to team members
+* Managers Interface. Changing absences status', inviting users, reports etc
 * Users should be able to sort calendar by team members and all
 * Refactor CSS and properly implement bootstrap
 * Refactor Rspec tests
