@@ -44,7 +44,7 @@ describe "Authentication" do
       end
 
       describe "after signing in" do
-        it { should have_link('My Settings', href: edit_user_registration_path) }
+        it { should have_link('Account',     href: '#') }
         it { should have_link('Sign out',    href: sign_out_path) }
         it { should_not have_link('Sign in', href: sign_in_path) }
 

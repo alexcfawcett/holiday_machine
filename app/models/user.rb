@@ -104,6 +104,10 @@ class User < ActiveRecord::Base
     end
   end
 
+  def is_manager?
+    return true if user_type_id == 2
+  end
+
   private
 
   def generate_authentication_token

@@ -10,6 +10,17 @@ FactoryGirl.define do
     confirmed_at Time.now #set confirmed_at so we don't need to send emails etc for test user
   end
 
+  factory :manager do
+    forename "Eamon"
+    surname "Skelly"
+    sequence(:email) {|n| "manager#{n}@example.com" }
+    password 'password'
+    password_confirmation 'password'
+    user_type_id 2
+    invite_code "Sage1nvite00"
+    confirmed_at Time.now #set confirmed_at so we don't need to send emails etc for test user
+  end
+
   factory :user_type do
 	  name "Manager"
   end

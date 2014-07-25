@@ -23,7 +23,7 @@ class Absence < ActiveRecord::Base
 
   # Callbacks
   # TODO re-implement these
-  # before_save :set_half_days, :set_working_days
+  #before_save :set_half_days, :set_working_days
   before_save :set_working_days
   after_create :decrease_days_remaining
   before_destroy :check_if_holiday_has_passed
