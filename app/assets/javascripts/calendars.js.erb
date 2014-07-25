@@ -3,11 +3,21 @@ $(function() {
     initCalendar()
 
     $("#calendar_filter").change(function() {
-        $("#calendar_filter").val($(this).val());
-        alert('Implement this please :)')
+        // Refetch the JSON feed (using the new filter)
+        $('#calendar').fullCalendar( 'refetchEvents' )
     });
 });
 
+/*
+ * Returns the calendar filter value which is sent when retrieving the JSON
+ */
+function getCalendarFilter() {
+    return $( "#calendar_filter" ).val();
+}
+
+/*
+ * Initialises the Absence Calendar. Setting up the JSON feed and the LookAndFeel
+ */
 function initCalendar() {
     $('#calendar').fullCalendar({
         header: {
@@ -20,7 +30,15 @@ function initCalendar() {
         //    window.location = "/vacations/" + calEvent.id
         //},
         theme: true,
-        events: "/calendar",
+        events: {
+            url: '/calendar',
+            data: function() {
+                return {
+                    // Use filter from calendar_filter dropdown
+                    filter: getCalendarFilter()
+                };
+            }
+        },
         disableDragging: true,
         weekends: false
     });

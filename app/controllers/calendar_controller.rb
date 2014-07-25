@@ -6,7 +6,8 @@ class CalendarController < ApplicationController
     respond_to do |format|
       format.js {
         #Populate the calendar
-        holidays_json = Absence.team_holidays_as_json current_user, params[:start], params[:end], params[:filter]
+        #puts "FILTER: #{params[:filter]}"
+        holidays_json = Absence.as_json current_user, params[:start], params[:end], params[:filter]
         render :json => holidays_json
       }
       format.html {
@@ -14,5 +15,9 @@ class CalendarController < ApplicationController
         render 'show'
       }
     end
+  end
+
+  def show
+    @holiday_status = HolidayStatus.order(:status)
   end
 end

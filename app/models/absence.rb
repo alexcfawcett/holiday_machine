@@ -23,24 +23,26 @@ class Absence < ActiveRecord::Base
 
   # Callbacks
   # TODO re-implement these
- #before_save :set_half_days, :set_working_days
- before_save :set_working_days
- after_create :decrease_days_remaining
- before_destroy :check_if_holiday_has_passed
- after_destroy :add_days_remaining
+  # before_save :set_half_days, :set_working_days
+  before_save :set_working_days
+  after_create :decrease_days_remaining
+  before_destroy :check_if_holiday_has_passed
+  after_destroy :add_days_remaining
 
-  # Scopes - Are these 3 still used?
-  scope :team_holidays, lambda { |manager_id| where(:manager_id => manager_id) }
+  # Scopes
   scope :user_holidays, lambda { |user_id| where(:user_id => user_id).order('date_from ASC') }
   scope :per_holiday_year, lambda { |holiday_year_id| where(:holiday_year_id => holiday_year_id) }
 
+  scope :active, lambda { where("? BETWEEN date_from AND date_to",DateTime.now)}
+  scope :in_between, lambda { |from_date, to_date|  where "date_from >= ? and date_to <= ?", from_date, to_date}
+  scope :upcoming, lambda { where("date_from BETWEEN ? AND ?", DateTime.now, DateTime.now + 1.weeks)}
+
+  scope :team_holidays, lambda { |manager_id| where(user_id: User.get_team_users(manager_id))}
   scope :active_team_holidays, lambda { |manager_id| where(user_id: User.get_team_users(manager_id)).
-                                        where("? BETWEEN date_from AND date_to",DateTime.now).
-                                        order('date_from ASC') }
+                                        active.order('date_from ASC') }
 
   scope :upcoming_team_holidays, lambda { |manager_id| where(user_id: User.get_team_users(manager_id)).
-                                          where("date_from BETWEEN ? AND ?", DateTime.now, DateTime.now + 1.weeks).
-                                          order('date_from ASC') }
+                                          upcoming.order('date_from ASC') }
 
   scope :user_holidays_in_year, lambda { |user, holiday_year_id| where(holiday_year_id: holiday_year_id).
                                           where(user_id: user.id).order('date_from ASC')  }
@@ -54,15 +56,22 @@ class Absence < ActiveRecord::Base
     self[:date_to] = (convert_uk_date_to_iso val, false)
   end
 
-  def self.team_holidays_as_json current_user, start_date, end_date, selection_type
+  def self.as_json current_user, start_date, end_date, filter
     date_from = DateTime.parse(Time.at(start_date.to_i).to_s)
     date_to = DateTime.parse(Time.at(end_date.to_i).to_s)
 
-    holidays = self.get_team_holidays_for_dates current_user, date_from, date_to, selection_type
-    bank_holidays = BankHoliday.where "date_of_hol between ? and ? ", date_from, date_to
+    if filter == "ME"
+      holidays = user_holidays(current_user.id).in_between(date_from, date_to)
+    elsif filter == "TEAM"
+      holidays = team_holidays(current_user.manager_id).in_between(date_from, date_to)
+    else
+      holidays = in_between(date_from, date_to)
+    end
 
+    bank_holidays = BankHoliday.in_between(date_from, date_to)
     self.convert_to_json holidays, bank_holidays, current_user
   end
+
 
   def self.mark_as_taken current_user
     holidays = self.where "date_to < ? and user_id =?", DateTime.now, current_user.id
@@ -77,12 +86,6 @@ class Absence < ActiveRecord::Base
   end
 
   private
-
-  def self.get_team_holidays_for_dates current_user, start_date, end_date, selection_type
-    team_user_ids = select_user_group(current_user, selection_type).map(&:id)
-    holidays = self.where "date_from >= ? and date_to <= ? and (user_id in(?))", start_date, end_date, team_user_ids
-    holidays
-  end
 
   def self.select_user_group current_user, selection_type
     case selection_type
@@ -203,7 +206,7 @@ class Absence < ActiveRecord::Base
   end
 
   def business_days_between
-    bank_holidays = BankHoliday.where("date_of_hol BETWEEN ? AND ?", date_from - 1.day, date_to + 1.day)
+    bank_holidays = BankHoliday.in_between(date_from - 1.day, date_to + 1.day)
     holidays_array = bank_holidays.collect { |hol| hol.date_of_hol }
     weekdays = (date_from.to_date..date_to.to_date).reject { |d| [0, 6].include? d.wday or holidays_array.include?(d) }
     business_days = weekdays.length - half_day_adjustment
