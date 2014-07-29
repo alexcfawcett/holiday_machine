@@ -1,0 +1,384 @@
+@import "bootstrap";
+
+/* mixins, variables, etc. */
+
+$grayMediumLight: #eaeaea;
+
+@mixin box_sizing {
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+/* universal */
+
+html {
+  overflow-y: scroll;
+}
+
+body {
+  padding-top: 60px;
+}
+
+section {
+  overflow: auto;
+}
+
+textarea {
+  resize: vertical;
+}
+
+.center {
+  text-align: center;
+  h1 {
+    margin-bottom: 10px;
+  }
+}
+
+/* typography */
+
+h1, h2, h3, h4, h5, h6 {
+  line-height: 1;
+}
+
+h1 {
+  font-size: 3em;
+  letter-spacing: -2px;
+  margin-bottom: 30px;
+  text-align: center;
+}
+
+h4 {
+  font-size: 1.75em;
+  letter-spacing: -1px;
+  margin-bottom: 30px;
+  text-align: left;
+  font-weight: normal;
+}
+
+p {
+  font-size: 1.1em;
+  line-height: 1.7em;
+}
+
+
+/* header */
+
+#logo {
+  float: left;
+  margin-right: 10px;
+  font-size: 1.7em;
+  color: white;
+  text-transform: uppercase;
+  letter-spacing: -1px;
+  padding-top: 9px;
+  font-weight: bold;
+  line-height: 1;
+  &:hover {
+    color: white;
+    text-decoration: none;
+  }
+}
+
+/* footer */
+
+footer {
+  margin-top: 45px;
+  padding-top: 5px;
+  border-top: 1px solid $grayMediumLight;
+  color: $grayLight;
+  a {
+    color: $gray;
+    &:hover {
+      color: $grayDarker;
+    }
+  }
+  small {
+    float: left;
+  }
+  ul {
+    float: right;
+    list-style: none;
+    li {
+      float: left;
+      margin-left: 10px;
+    }
+  }
+}
+
+/* miscellaneous */
+
+.debug_dump {
+  clear: both;
+  float: left;
+  width: 100%;
+  margin-top: 45px;
+  @include box_sizing;
+}
+
+/* forms */
+
+input, textarea, select, .uneditable-input {
+  border: 1px solid #bbb;
+  width: 100%;
+  margin-bottom: 15px;
+  @include box_sizing;
+}
+
+input {
+  height: auto !important;
+}
+
+#error_explanation {
+  color: #f00;
+  ul {
+    list-style: none;
+    margin: 0 0 18px 0;
+  }
+}
+
+.field_with_errors {
+  @extend .control-group;
+  @extend .error;
+}
+
+/* user-info */
+/* TODO: Tidy this up. Must be able to make this cleaner? */
+
+/* line 476, sass/application.scss */
+#user-info {
+  padding: 10px;
+  background-color: #f5f5f5;
+  background-repeat: repeat-x;
+  background-image: -khtml-gradient(linear, left top, left bottom, from(#f9f9f9), to(#f5f5f5));
+  background-image: -moz-linear-gradient(#f9f9f9, #f5f5f5);
+  background-image: -ms-linear-gradient(#f9f9f9, #f5f5f5);
+  background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #f9f9f9), color-stop(100%, #f5f5f5));
+  background-image: -webkit-linear-gradient(#f9f9f9, #f5f5f5);
+  background-image: -o-linear-gradient(#f9f9f9, #f5f5f5);
+  -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr='#f9f9f9', endColorstr='#f5f5f5', GradientType=0)";
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#f9f9f9', endColorstr='#f5f5f5', GradientType=0);
+  background-image: linear-gradient(#f9f9f9, #f5f5f5);
+  border: 1px solid #eee;
+  -moz-border-radius: 4px;
+  -webkit-border-radius: 4px;
+  -o-border-radius: 4px;
+  -ms-border-radius: 4px;
+  -khtml-border-radius: 4px;
+  border-radius: 4px;
+  overflow: hidden;
+  *zoom: 1;
+}
+/* line 491, sass/application.scss */
+#user-info h3 {
+  margin-top: 0;
+}
+/* line 492, sass/application.scss */
+#user-info .gravatar-wrapper {
+  display: inline;
+  float: left;
+  margin-right: 10px;
+  width: 70px;
+}
+/* line 147, ../../../../.rvm/gems/ruby-1.9.3-p194/gems/compass-0.11.5/frameworks/blueprint/stylesheets/blueprint/_grid.scss */
+* html #user-info .gravatar-wrapper {
+  overflow-x: hidden;
+}
+/* line 495, sass/application.scss */
+#user-info .user-info-wrapper {
+  display: inline;
+  float: left;
+  margin-right: 0;
+  width: 470px;
+}
+/* line 147, ../../../../.rvm/gems/ruby-1.9.3-p194/gems/compass-0.11.5/frameworks/blueprint/stylesheets/blueprint/_grid.scss */
+* html #user-info .user-info-wrapper {
+  overflow-x: hidden;
+}
+/* line 503, sass/application.scss */
+#user-info form label,
+#user-info form select,
+#user-info form #days-remaining-wrapper {
+  display: inline;
+  float: left;
+  line-height: 25px;
+  margin-right: 10px;
+}
+/* line 507, sass/application.scss */
+#user-info form label span,
+#user-info form select span,
+#user-info form #days-remaining-wrapper span {
+  font-weight: bold;
+}
+
+/* line 273, sass/application.scss */
+table {
+  width: 100%;
+  margin-bottom: 18px;
+  padding: 0;
+  font-size: 13px;
+  border-collapse: collapse;
+  border: 1px solid #ddd;
+}
+/* line 281, sass/application.scss */
+table th,
+table td {
+  padding: 10px 10px 9px;
+  line-height: 18px;
+  text-align: left;
+}
+/* line 286, sass/application.scss */
+table th {
+  padding-top: 9px;
+  font-weight: bold;
+  vertical-align: middle;
+}
+/* line 291, sass/application.scss */
+table td {
+  vertical-align: top;
+  border-top: 1px solid #ddd;
+}
+/* line 294, sass/application.scss */
+table td.actions a {
+  margin-right: 10px;
+}
+/* line 298, sass/application.scss */
+table tbody th {
+  border-top: 1px solid #ddd;
+  vertical-align: top;
+}
+/* line 303, sass/application.scss */
+table tbody tr:nth-child(odd) td,
+table tbody tr:nth-child(odd) th {
+  background-color: #f9f9f9;
+}
+/* line 307, sass/application.scss */
+table tbody tr:hover td,
+table tbody tr:hover th {
+  background-color: #f5f5f5;
+}
+
+
+/* Calendar */
+/* TODO: Tidy this up. Must be able to make this cleaner? */
+
+#calendar_filter {
+  width: 25%;
+}
+
+/* line 544, sass/application.scss */
+#calendar {
+  margin-top: 20px;
+}
+/* line 546, sass/application.scss */
+#calendar table {
+  border: none;
+}
+/* line 549, sass/application.scss */
+#calendar table tr.fc-last td {
+  border-bottom: 1px solid #ddd;
+}
+/* line 553, sass/application.scss */
+#calendar table.fc-header {
+  border: none;
+}
+/* line 557, sass/application.scss */
+#calendar table.fc-header tbody tr:nth-child(odd) td,
+#calendar table.fc-header tbody tr:nth-child(odd) th {
+  background-color: inherit;
+}
+/* line 561, sass/application.scss */
+#calendar table.fc-header td {
+  border-top: none;
+}
+/* line 566, sass/application.scss */
+#calendar table.fc-border-separate td {
+  border: 1px solid #ddd;
+  border-width: 1px 0 0 1px;
+}
+/* line 569, sass/application.scss */
+#calendar table.fc-border-separate td.fc-last {
+  border-right: 1px solid #ddd;
+}
+/* line 574, sass/application.scss */
+#calendar table td.fc-today {
+  background-color: #FEFBF3;
+}
+/* line 578, sass/application.scss */
+#calendar .fc-event {
+  cursor: pointer;
+}
+/* line 582, sass/application.scss */
+#calendar .fc-header-left .fc-button {
+  border: 1px solid #ddd;
+  padding: 0 14px;
+}
+/* line 586, sass/application.scss */
+#calendar .fc-header-left .fc-button-today {
+  text-transform: capitalize;
+}
+/* line 589, sass/application.scss */
+#calendar .fc-header-left .fc-button-prev {
+  -moz-border-radius: 8px 0 0 8px;
+  -webkit-border-radius: 8px 0 0 8px;
+  -o-border-radius: 8px 0 0 8px;
+  -ms-border-radius: 8px 0 0 8px;
+  -khtml-border-radius: 8px 0 0 8px;
+  border-radius: 8px 0 0 8px;
+}
+/* line 591, sass/application.scss */
+#calendar .fc-header-left .fc-button-prev .fc-button-inner {
+  background: transparent url(../images/arrow.png) no-repeat 0 4px;
+}
+/* line 595, sass/application.scss */
+#calendar .fc-header-left .fc-button-next {
+  -moz-border-radius: 0 8px 8px 0;
+  -webkit-border-radius: 0 8px 8px 0;
+  -o-border-radius: 0 8px 8px 0;
+  -ms-border-radius: 0 8px 8px 0;
+  -khtml-border-radius: 0 8px 8px 0;
+  border-radius: 0 8px 8px 0;
+}
+/* line 597, sass/application.scss */
+#calendar .fc-header-left .fc-button-next .fc-button-inner {
+  background: transparent url(../images/arrow.png) no-repeat 0 4px;
+  -webkit-transform: rotate(180deg);
+  -moz-transform: rotate(180deg);
+}
+
+/* line 608, sass/application.scss */
+dl dt,
+dl dd {
+  margin-bottom: 10px;
+}
+/* line 611, sass/application.scss */
+dl dt {
+  width: 140px;
+  font-weight: bold;
+  float: left;
+  clear: left;
+}
+
+/* line 619, sass/application.scss */
+#calendar-key {
+  float: right;
+  right: 2px;
+  width: 150px;
+  margin: 0;
+}
+/* line 625, sass/application.scss */
+#calendar-key dt,
+#calendar-key dd {
+  margin-bottom: 2px;
+}
+/* line 628, sass/application.scss */
+#calendar-key dt {
+  width: 90px;
+}
+/* line 631, sass/application.scss */
+#calendar-key dd {
+  width: 60px;
+  height: 18px;
+  text-indent: -9999px;
+  margin: 0 0 2px 90px;
+}

@@ -1,13 +1,16 @@
-<h4>Please sign in</h4>
-<%= simple_form_for(resource, :as => resource_name, :url => session_path(resource_name)) do |f| %>
-    <%= devise_error_messages! %>
+<% provide(:title, "Sign in") %>
+<h1>Sign in</h1>
+
+<div class="row">
+  <div class="span6 offset3">
+    <%= simple_form_for(resource, :as => resource_name, :url => session_path(resource_name)) do |f| %>
+
     <%= f.input :email %>
     <%= f.input :password %>
-    <div class="well">
-      <%= f.button :submit, "Sign in", :class => 'btn primary' %>
-    </div>
-<% end %>
+    <%= f.submit "Sign in", class: "btn btn-large btn-primary" %>
 
-<%= content_for :sidebar do %>
-  <%= render :partial => "devise/shared/links" %>
-<% end %>
+    <% end %>
+
+    <p>New user? <%= link_to "Sign up now!", register_path %></p>
+  </div>
+</div>

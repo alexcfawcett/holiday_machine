@@ -1,11 +1,16 @@
-# require 'spec_helper'
-# require 'ruby-debug'
+require 'spec_helper'
 
 describe HolidayStatus do
-  pending "add some examples to (or delete) #{__FILE__}"
-  
-  it "should return true" do
-    p "hello"
-    true
+
+  before {@status = HolidayStatus.new(status: "Pending")}
+
+  subject { @status }
+
+  it { should be_valid }
+
+  context 'after creation' do
+    before do
+      subject.save!
+    end
   end
 end

@@ -1,2 +1,2 @@
-$("#user-holidays").html('<%= escape_javascript(render 'table') %>');
-$("#days_remaining").html(" <%= @days_remaining %>");
+$("#days_remaining").html('<%= @days_remaining %>');
+$("#holidays_table").html("<%= escape_javascript(render('table')) %>");

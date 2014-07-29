@@ -1,35 +1,52 @@
 class Absence < ActiveRecord::Base
 
+  attr_accessible :date_from, :date_to, :description, :holiday_status_id, :user_id, :absence_type_id
+  attr_accessor :half_day_from, :half_day_to
+
   HOL_COLOURS = %W{#FDF5D9 #D1EED1 #FDDFDE #DDF4Fb}
   BORDER_COLOURS = %W{#FCEEC1 #BFE7Bf #FBC7C6 #C6EDF9}
-  
+
+  # Associations
   belongs_to :holiday_status
   belongs_to :holiday_year
   belongs_to :user
   belongs_to :absence_type
 
-  before_save :set_half_days, :set_working_days
-  before_destroy :check_if_holiday_has_passed
+  # Validation
+ validates :date_from, :date_to, :description, :holiday_status_id, :user_id, :absence_type_id, presence: true
+ validate :holiday_must_not_straddle_holiday_years
+ validate :half_days_not_on_working_days, :on => :create
+ validate :dont_exceed_days_remaining, :on => :create
+ validate :date_from_must_be_before_date_to
+ validate :working_days_greater_than_zero
+ validate :no_overlapping_holidays, :on => :create
 
-  after_destroy :add_days_remaining
+  # Callbacks
+  # TODO re-implement these
+  #before_save :set_half_days, :set_working_days
+  before_save :set_working_days
   after_create :decrease_days_remaining
+  before_destroy :check_if_holiday_has_passed
+  after_destroy :add_days_remaining
 
-  scope :team_holidays, lambda { |manager_id| where(:manager_id => manager_id) }
+  # Scopes
   scope :user_holidays, lambda { |user_id| where(:user_id => user_id).order('date_from ASC') }
   scope :per_holiday_year, lambda { |holiday_year_id| where(:holiday_year_id => holiday_year_id) }
 
-  validates_presence_of :date_from
-  validates_presence_of :date_to
-  validates_presence_of :description
+  scope :active, lambda { where("? BETWEEN date_from AND date_to",DateTime.now)}
+  scope :in_between, lambda { |from_date, to_date|  where "date_from >= ? and date_to <= ?", from_date, to_date}
+  scope :upcoming, lambda { where("date_from BETWEEN ? AND ?", DateTime.now, DateTime.now + 1.weeks)}
 
-  validate :holiday_must_not_straddle_holiday_years
-  validate :half_days_not_on_working_days, :on => :create
-  validate :dont_exceed_days_remaining, :on => :create
-  validate :date_from_must_be_before_date_to
-  validate :working_days_greater_than_zero
-  validate :no_overlapping_holidays, :on => :create
+  scope :team_holidays, lambda { |manager_id| where(user_id: User.get_team_users(manager_id))}
+  scope :active_team_holidays, lambda { |manager_id| where(user_id: User.get_team_users(manager_id)).
+                                        active.order('date_from ASC') }
 
-  attr_accessor :half_day_from, :half_day_to
+  scope :upcoming_team_holidays, lambda { |manager_id| where(user_id: User.get_team_users(manager_id)).
+                                          upcoming.order('date_from ASC') }
+
+  scope :user_holidays_in_year, lambda { |user, holiday_year_id| where(holiday_year_id: holiday_year_id).
+                                          where(user_id: user.id).order('date_from ASC')  }
+
 
   def date_from= val
     self[:date_from] = (convert_uk_date_to_iso val, true)
@@ -39,30 +56,22 @@ class Absence < ActiveRecord::Base
     self[:date_to] = (convert_uk_date_to_iso val, false)
   end
 
-  def self.team_holidays_as_json current_user, start_date, end_date
-    #TODO filter this to show all hols, by team, and by user
+  def self.as_json current_user, start_date, end_date, filter
     date_from = DateTime.parse(Time.at(start_date.to_i).to_s)
     date_to = DateTime.parse(Time.at(end_date.to_i).to_s)
 
-    holidays = self.get_team_holidays_for_dates current_user, date_from, date_to
-    bank_holidays = BankHoliday.where "date_of_hol between ? and ? ", date_from, date_to
+    if filter == "ME"
+      holidays = user_holidays(current_user.id).in_between(date_from, date_to)
+    elsif filter == "TEAM"
+      holidays = team_holidays(current_user.manager_id).in_between(date_from, date_to)
+    else
+      holidays = in_between(date_from, date_to)
+    end
 
+    bank_holidays = BankHoliday.in_between(date_from, date_to)
     self.convert_to_json holidays, bank_holidays, current_user
   end
 
-
-  def self.get_team_holidays_for_dates current_user, start_date, end_date
-    #Allows everyone to see everyone's holidays
-    team_users = User.all
-    #TODO filter by team
-
-    team_users_array = []
-    team_users.each do |u|
-      team_users_array << u.id
-    end
-    holidays = self.where "date_from >= ? and date_to <= ? and (user_id in(?))", start_date, end_date, team_users_array
-    holidays
-  end
 
   def self.mark_as_taken current_user
     holidays = self.where "date_to < ? and user_id =?", DateTime.now, current_user.id
@@ -78,7 +87,21 @@ class Absence < ActiveRecord::Base
 
   private
 
+  def self.select_user_group current_user, selection_type
+    case selection_type
+      when 'ALL'
+        return User.all
+      when 'ME'
+        User.where(:id => current_user.id)
+      else
+        # Doesn't work for managers (they see the team upwards)
+        return User.get_team_users(current_user.manager_id)        
+    end
+  end
+
   def half_days_not_on_working_days
+    return if date_from.nil?
+
    if date_on_non_working_day(date_from) && half_day_from != "Full Day"
      errors.add(:date_from, "- your half day falls on a non-working day")
      false
@@ -124,26 +147,27 @@ class Absence < ActiveRecord::Base
     json
   end
 
-  #TODO add the overlaps between team members
-  #  def intra_team_holiday_clashes
-  #  end
-
   def date_from_must_be_before_date_to
+    return false if date_from.nil? || date_to.nil?
     errors.add(:date_from, " must be before date to.") if date_from > date_to
   end
 
   def working_days_greater_than_zero
+    return false if date_from.nil? || date_to.nil?
+
     @working_days = business_days_between
     errors.add(:working_days_used, " - This holiday request uses no working days") if @working_days==0
   end
 
   def holiday_must_not_straddle_holiday_years
+    #puts ' ONE OR MORE DATES WHERE NIL' if date_to.nil? || date_from.nil?
+
     number_years = HolidayYear.holiday_years_containing_holiday(date_from, date_to).count
     errors.add(:base, "Holiday must not cross years") if number_years> 1
   end
 
   def no_overlapping_holidays
-    absences = Absence.find_all_by_user_id(self.user_id)
+    absences = Absence.where(user_id: self.user_id)
     absences.each do |absence|
       errors.add(:base, "Some leave already exists within this date range") if overlaps?(absence)
     end
@@ -154,6 +178,11 @@ class Absence < ActiveRecord::Base
   end
 
   def convert_uk_date_to_iso date_str, is_date_from
+    if date_str.length != 10
+      errors.add(:date, "Invalid date format.")
+      return nil
+    end
+
     split_date=date_str.split("/")
     if is_date_from
       DateTime.new(split_date[2].to_i, split_date[1].to_i, split_date[0].to_i, 9)
@@ -177,7 +206,7 @@ class Absence < ActiveRecord::Base
   end
 
   def business_days_between
-    bank_holidays = BankHoliday.where("date_of_hol BETWEEN ? AND ?", date_from - 1.day, date_to + 1.day)
+    bank_holidays = BankHoliday.in_between(date_from - 1.day, date_to + 1.day)
     holidays_array = bank_holidays.collect { |hol| hol.date_of_hol }
     weekdays = (date_from.to_date..date_to.to_date).reject { |d| [0, 6].include? d.wday or holidays_array.include?(d) }
     business_days = weekdays.length - half_day_adjustment
@@ -201,6 +230,11 @@ class Absence < ActiveRecord::Base
   end
 
   def dont_exceed_days_remaining
+    if user.nil?
+      errors.add(:user_id, "is invalid")
+      return
+    end
+
     return unless self.absence_type_id == 1 #Only holidays affect the days remaining
     holiday_allowance = self.user.get_holiday_allowance_for_dates self.date_from, self.date_to
     if holiday_allowance == 0 or holiday_allowance.nil? then
@@ -209,6 +243,7 @@ class Absence < ActiveRecord::Base
     errors.add(:working_days_used, "-Number of days selected exceeds your allowance!") if holiday_allowance.days_remaining < business_days_between
   end
 
+  # TODO: This currently does not work
   def set_half_days
     if date_from.to_date == date_to.to_date
       #Ensure the half days match

@@ -11,7 +11,7 @@ class SettingsController < ApplicationController
     @year_end = ((Date.today.at_beginning_of_year + 1.year) - 1.day).strftime("%d/%m/%Y")
 
     respond_to do |format|
-      format.html # index.html.erb
+      format.html # show.html.erb
       format.js # index.js.erb
     end
   end

@@ -1,12 +1,14 @@
-<%= simple_form_for(@absence, :remote => true, :validate => true) do |f| %>
+<%= simple_form_for(@absence) do |f| %>
+  <%#= f.error_notification %>
+  <%= render 'shared/error_messages', object: f.object %>
+
   <%= f.input :holiday_year_id, :as => :hidden %>
-  <%= f.input :date_from, :as => :string, :input_html => { :value => Date.today.strftime("%d/%m/%Y") }  %>
+  <%= f.input :date_from, :as => :string, :input_html => { class: 'datepicker', value: Date.today.strftime("%d/%m/%Y") }  %>
   <%= f.input :half_day_from, :collection=>["Full Day", "Half Day AM", "Half Day PM"], :include_blank => false, :label=> false %>
-  <%= f.input :date_to, :as => :string, :input_html => { :value => Date.today.strftime("%d/%m/%Y") } %>
+  <%= f.input :date_to, :as => :string, :input_html => { class: 'datepicker', value: Date.today.strftime("%d/%m/%Y")
+  } %>
   <%= f.input :half_day_to, :collection=>["Full Day", "Half Day AM", "Half Day PM"], :include_blank => false, :label=> false %>
   <%= f.association :absence_type, :include_blank => false%>
   <%= f.input :description %>
-  <div class="well">
-    <%= f.button :submit, 'Add Leave', :class => 'btn primary' %>
-  </div>
+  <%= f.button :submit, 'Add Leave', class: "btn btn-large btn-primary" %>
 <% end %>

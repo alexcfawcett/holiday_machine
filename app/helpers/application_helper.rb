@@ -2,6 +2,19 @@ require 'digest/md5'
 
 module ApplicationHelper
 
+
+  # Returns the full title on a per-page basis.
+  def full_title(page_title)
+    base_title = "Holiday Thyme"
+    if page_title.empty?
+      base_title
+    else
+      "#{base_title} | #{page_title}"
+    end
+  end
+
+
+  # --------------------------------------
   def show_errors_as_list(errors)
     content_tag(:ul) do
       errors.full_messages.map do |mssg|

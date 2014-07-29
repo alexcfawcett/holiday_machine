@@ -6,5 +6,13 @@
   <%= content_tag :dd, '&nbsp;', :style => "background-color: #{Absence::HOL_COLOURS[status.id - 1]}; border: 1px solid #{Absence::BORDER_COLOURS[status.id - 1]};".html_safe %>
 <% end %>
 </dl>
-<div id="calendar"></div>
 
+<%= simple_form_for 'calendar',html: { :method => :get, id: 'calendar_filter_form' }  do |f| %>
+    <select id="calendar_filter">
+        <option value="TEAM">My Team's absences</option>
+        <option value="ALL">Everyone's absences</option>
+        <option value="ME">My absences</option>
+    </select>
+<% end %>
+
+<div id="calendar"></div>

@@ -1,21 +1,53 @@
-<%= content_for :javascripts do %>
-  <%= javascript_include_tag 'absences' %>
-<% end %>
+<div class="row">
+  <aside class="span8">
+    <div id="user-info">
+      <div class="gravatar-wrapper">
+        <%= link_to image_tag(gravatar(current_user, :size => 60), :class => 'gravatar'), "https://en.gravatar.com/site/signup" %>
+      </div>
+      <div class="user-info-wrapper">
+        <h3><%= current_user.full_name %></h3>
+        <%= simple_form_for 'holiday_year', :remote => true do |f| %>
+            <%= f.collection_select :id, HolidayYear.all, :id, :description, :selected => HolidayYear.current_year.id %>
+            <div id="days-remaining-wrapper">Days remaining: <%= content_tag :span, @days_remaining, :id => 'days_remaining' %></div>
+        <% end %>
+      </div>
+    </div>
+    <h3>My Holidays</h3>
+    <div id="holidays_table">
+        <%= render 'table' %>
+    </div>
 
-<%= content_for :sidebar do %>
-  <%= render 'form' %>
-<% end %>
-<div id="user-info">
-  <div class="gravatar-wrapper">
-    <%= link_to image_tag(gravatar(current_user, :size => 60), :class => 'gravatar'), "https://en.gravatar.com/site/signup" %>
-  </div>
-  <div class="user-info-wrapper">
-    <h3>Hello <%= current_user.forename %></h3>
-    <%= simple_form_for 'holiday_year', :remote => true do |f| %>
-      <%= f.collection_select :id, HolidayYear.all, :id, :description, :selected => HolidayYear.current_year.id %>
-      <div id="days-remaining-wrapper">Days remaining: <%= content_tag :span, @days_remaining, :id => 'days_remaining' %></div>
-    <% end %>
+    <div class="row">
+      <aside class="span4">
+        <h4>Active Team Holidays</h4>
+        <% if @active_team_holidays.any? %>
+            <ul class="active_team_holidays">
+              <% @active_team_holidays.each do |holiday| %>
+                  <li><%= holiday.user.forename %></li>
+              <% end %>
+            </ul>
+        <% else %>
+            <p>There are no active team holidays.</p>
+        <% end %>
+      </aside>
+      <div class="span4">
+        <h4>Upcoming Team Holidays</h4>
+        <% if @upcoming_team_holidays.any? %>
+            <ul class="upcoming_team_holidays">
+              <% @upcoming_team_holidays.each do |holiday| %>
+                  <li><%= holiday.user.forename %></li>
+              <% end %>
+            </ul>
+        <% else %>
+            <p>There are no upcoming team holidays.</p>
+        <% end %>
+      </div>
+    </div>
+  </aside>
+
+  <div class="span4">
+    <%= render 'absences/form'%>
   </div>
 </div>
 
-<%= render 'table' %>
+

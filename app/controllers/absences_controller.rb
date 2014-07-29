@@ -4,31 +4,16 @@ class AbsencesController < ApplicationController
 
   # GET /vacations
   def index
-    @holidays ||= []
-    
-    @other_absences ||= []
 
-    @absence = Absence.new
+    load_data
+    @absence = current_user.absences.build
     @absence.holiday_year_id = HolidayYear.current_year.id
-
-    @holiday_statuses = HolidayStatus.pending_only
-
-    if params[:holiday_year_id]
-      user_days_per_year = UserDaysForYear.where(:user_id=> current_user.id, :holiday_year_id=>params[:holiday_year_id]).first
-      @days_remaining = user_days_per_year.days_remaining
-      
-      @holidays = Absence.user_holidays(current_user.id).per_holiday_year(params[:holiday_year_id]).where("absence_type_id = 1")
-      @other_absences = Absence.user_holidays(current_user.id).per_holiday_year(params[:holiday_year_id]).where("absence_type_id != 1")
-    else
-      @days_remaining = current_user.get_holiday_allowance.days_remaining
-      @holidays = Absence.user_holidays(current_user.id).per_holiday_year(@absence.holiday_year_id).where("absence_type_id = 1")
-      @other_absences = Absence.user_holidays(current_user.id).per_holiday_year(@absence.holiday_year_id).where("absence_type_id != 1")
-    end
 
     respond_to do |format|
       format.js
       format.html
     end
+
   end
 
   # GET /vacations/1
@@ -45,35 +30,26 @@ class AbsencesController < ApplicationController
     end
   end
 
-
   # POST /vacations
   # POST /vacations.xml
   def create
     @absence = Absence.new(params[:absence])
-    @absence.holiday_year_id = nil #THIS MUST BE REMOVED OR WILL BE PASSED FROM THE FILTER
     @absence.user = current_user
     @absence.holiday_status_id = 1
-    manager_id = current_user.manager_id
-    manager = User.find_by_id(manager_id)
 
-    # respond_to do |format|
-      if @absence.save
-        unless manager.nil?
-          HolidayMailer.holiday_request(current_user, manager, @absence).deliver
-        end
-
-        user_days_per_year = UserDaysForYear.where(:user_id=> current_user.id, :holiday_year_id => params[:absence][:holiday_year_id]).first
-        @days_remaining = user_days_per_year.days_remaining
-
-        flash.now[:success] = "Successfully created time off."
-        redirect_to '/'
-        # format.js
-      else
-        flash.now[:error] = "There was a problem creating your request"
-        redirect_to '/'
-        # format.js
+    if @absence.save
+      manager_id = current_user.manager_id
+      manager = User.find_by_id(manager_id)
+      unless manager.nil?
+        HolidayMailer.holiday_request(current_user, manager, @absence).deliver
       end
-    # end
+
+      flash[:success] = I18n.t('absence_created')
+      redirect_to absences_path
+    else
+      load_data
+      render 'index'
+    end
   end
 
   def update
@@ -101,6 +77,7 @@ class AbsencesController < ApplicationController
   # DELETE /absences/1.xml
   def destroy
     @absence = Absence.find(params[:id])
+
     respond_to do |format|
       if @absence.destroy
         unless current_user.manager_id.nil?
@@ -126,4 +103,21 @@ class AbsencesController < ApplicationController
     end
   end
 
+  private
+  def load_data
+    # TODO: Add validation. Will fall down if invalid id is supplied
+    if params[:holiday_year_id]
+      holiday_year = HolidayYear.find(params[:holiday_year_id])
+      @days_remaining = current_user.holidays_left(holiday_year)
+      @holidays = Absence.user_holidays_in_year(current_user, holiday_year)
+    else
+      @days_remaining = current_user.holidays_left(HolidayYear.current_year)
+      @holidays = Absence.user_holidays_in_year(current_user, HolidayYear.current_year)
+    end
+
+    # Not effected by year dropdown
+    @active_team_holidays = Absence.active_team_holidays(current_user.manager_id)
+    @upcoming_team_holidays = Absence.upcoming_team_holidays(current_user)
+
+  end
 end
