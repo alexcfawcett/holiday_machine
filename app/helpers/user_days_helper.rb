@@ -18,7 +18,7 @@ module UserDaysHelper
   end
 
   def days_remaining user, selected_year
-    user.get_holiday_allowance_for_selected_year(selected_year).days_remaining
+    user.get_holiday_allowance_for_selected_year(selected_year)
   end
 
 end
