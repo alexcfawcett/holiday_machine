@@ -12,11 +12,10 @@
 //
 
 //= require jquery
+//= require jquery.turbolinks
 //= require jquery-ui/datepicker
 //= require jquery_ujs
 //= require bootstrap
-//= require turbolinks
 //= require_tree .
-
-// -----------------
 //= require fullcalendar
+//= require turbolinks
