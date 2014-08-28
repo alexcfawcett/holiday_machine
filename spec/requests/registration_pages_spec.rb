@@ -86,13 +86,8 @@ describe "User pages" do
             click_button "Save changes"
           end
           it { should have_selector('div.alert.alert', text: I18n.t('devise.registrations.updated')) }
-
-          # This fails but saving seems to work in dev
-          # TODO: Fix this test
-          #specify { expect(user).to change(password).to  new_password }
           it 'should save the users new password' do
-            user.reload
-            user.password.should == new_password
+            expect{user.reload}.to change{user.encrypted_password}
           end
         end
       end
