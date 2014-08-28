@@ -13,8 +13,8 @@ describe "Authentication" do
   describe "signin page" do
     before { visit sign_in_path }
 
-    it { should have_content('Sign in') }
-    it { should have_title('Sign in') }
+    it { should have_content('Sign In') }
+    it { should have_title('Sign In') }
     it { should have_link('Sign up now!',    href: register_path) }
   end
 
@@ -27,7 +27,7 @@ describe "Authentication" do
     describe "with invalid information" do
       before { click_button signin }
 
-      it { should have_title('Sign in') }
+      it { should have_title('Sign In') }
       it { should have_selector('div.alert.alert-alert') }
 
       describe "after visiting another page" do
@@ -45,12 +45,12 @@ describe "Authentication" do
 
       describe "after signing in" do
         it { should have_link('Account',     href: '#') }
-        it { should have_link('Sign out',    href: sign_out_path) }
-        it { should_not have_link('Sign in', href: sign_in_path) }
+        it { should have_link('Sign Out',    href: sign_out_path) }
+        it { should_not have_link('Sign In', href: sign_in_path) }
 
         describe "followed by signout" do
-          before { click_link "Sign out" }
-          it { should have_link('Sign in') }
+          before { click_link "Sign Out" }
+          it { should have_link('Sign In') }
         end
       end
     end

@@ -64,7 +64,7 @@ describe "User pages" do
 
         it { should have_selector('h3', text: "#{new_forename} #{user.surname}") }
         it { should have_selector('div.alert.alert', text: I18n.t('devise.registrations.updated')) }
-        it { should have_link('Sign out', href: sign_out_path) }
+        it { should have_link('Sign Out', href: sign_out_path) }
         specify { expect(user.reload.forename).to  eq new_forename }
       end
 

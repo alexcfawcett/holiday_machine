@@ -169,6 +169,18 @@ input {
   overflow: hidden;
   *zoom: 1;
 }
+
+/* administer/index */
+
+#administer-index img.gravatar {
+  float: left;
+  margin: 0 8px 8px 8px;
+}
+
+#administer-index div.gravatar-wrapper > h3 {
+  padding-top: 5px;
+}
+
 /* line 491, sass/application.scss */
 #user-info h3 {
   margin-top: 0;
