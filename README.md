@@ -16,8 +16,8 @@ Installation
 ```
 git clone https://github.com/etskelly/holiday_machine.git
 cd holiday_machine
-rake db:setup
-rake db:setup:populate
+bundle exec rake db:setup
+bundle exec rake db:populate
 bundle exec rails s
 ```
 When installing ensure that in the line:
