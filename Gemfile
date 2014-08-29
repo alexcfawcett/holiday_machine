@@ -4,7 +4,7 @@ ruby "2.0.0"
 gem 'rails', '4.0.0'
 gem 'pg'
 gem "devise", "~> 3.1.1"
-gem 'devise_invitable'
+gem 'devise_invitable', "~> 1.3.1"
 gem 'devise-encryptable'
 gem 'simple_form'
 gem 'uuid'

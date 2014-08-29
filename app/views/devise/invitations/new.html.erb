@@ -2,9 +2,12 @@
 <div class="row">
   <div class="span6 offset3">
     <%= simple_form_for resource, :as => resource_name, :url => invitation_path(resource_name), :html => {:method => :post} do |f| %>
-      <%= devise_error_messages! %>
+      <%#= devise_error_messages! %>
+      <%= render 'shared/error_messages', object: f.object %>
       <div class="well">
-        <%= f.input :email %>
+        <%= f.hidden_field :manager_id, value: current_user.id %>
+        <%= f.input :email, error: false, required: true %>
+        <%= f.association :user_type, :collection => UserType.all, :selected => 1, error: false, required: true %>
         <%= f.button :submit, "Send invitation", :class => 'btn primary' %>
         <%= link_to 'Cancel', :back, :class => 'btn' %>
       </div>

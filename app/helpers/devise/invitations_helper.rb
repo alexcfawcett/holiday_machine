@@ -1,0 +1,3 @@
+module Devise::InvitationsHelper
+  
+end
