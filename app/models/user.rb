@@ -22,8 +22,9 @@ class User < ActiveRecord::Base
   validates_presence_of :email, :forename, :surname, :user_type
   validates_presence_of :invite_code, :on => :create
   validates_each :invite_code, :on => :create do |record, attr, value|
-    record.errors.add attr, "Please enter correct invite code" unless value && value == "Sage1nvite00"
+    record.errors.add attr, "incorrect invite code" unless value && value == "Sage1nvite00"
   end
+  validate :validate_not_own_manager
 
   attr_accessor :invite_code
   attr_accessible :email, :password, :password_confirmation, :forename, :surname, :user_type_id, :manager_id, :invite_code, :invitation_token, :remember_me
@@ -120,5 +121,11 @@ class User < ActiveRecord::Base
       token = Devise.friendly_token
       break token unless User.where(authentication_token: token).first
     end
+  end
+end
+
+def validate_not_own_manager
+  if id == manager_id
+    errors.add(:manager_id, 'cannot be self')
   end
 end
