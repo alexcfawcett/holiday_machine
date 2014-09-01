@@ -75,7 +75,8 @@ Todo
 * Add help and contact pages (covering lost passwords, etc)
 * Test and lock down routes as needed (users should not be able to access manager-only areas)
 * Replace the Gmail details in config with environment variables, and the change password
-* If possible, replace Gmail SMTP with something else (in busy times it blocks requests)
+* If possible, replace Gmail SMTP with something else (hourly and daily send limits cause exceptions)
+* Alternatively, configure devise to intelligently handle SMTP send rejection (if possible)
 * Replace the secret_token (config/initializers/secret_token.rb) with env var for production
 * Revisit the calendar drop down options and clarify
 * Revisit the "Reports" table, this page could become very long and unusable
