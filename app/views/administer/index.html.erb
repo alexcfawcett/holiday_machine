@@ -1,5 +1,13 @@
+<% provide(:title, "Manage Absences") %>
 <div id="administer-index">
     <h1>Manage Absences</h1>
+  
+    <% if @users.empty? %>
+      <p>
+        No absences found.
+      </p>
+    <% end %>
+  
     <% @users.each do |user| %>
       <% unless user.absences.empty? %>
         <div class="gravatar-wrapper">
