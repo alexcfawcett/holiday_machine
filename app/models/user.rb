@@ -11,7 +11,11 @@ class User < ActiveRecord::Base
 
   ## Associations
   belongs_to :manager, :class_name => 'User', :foreign_key => 'manager_id'
-  has_many :employees, :class_name => 'User', :foreign_key => "manager_id"
+  has_many :employees, :class_name => 'User', :foreign_key => "manager_id" do
+    def active_only
+      where('confirmed_at NOT NULL')
+    end
+  end
 
   belongs_to :user_type
   has_many :user_days, dependent: :destroy
@@ -32,7 +36,7 @@ class User < ActiveRecord::Base
   ## Scopes
   #Includes self if manager
   scope :get_team_users, lambda { |manager_id| where(
-        '(users.manager_id = ? or users.id = ?)', #and confirmed_at is not null
+        '(users.manager_id = ? or users.id = ?) AND confirmed_at NOT NULL',
         manager_id,
         manager_id
     )}
@@ -93,7 +97,7 @@ class User < ActiveRecord::Base
 
   def all_staff
     all = []
-    self.employees.each do |user|
+    self.employees.active_only.each do |user|
       all << user
       root_children = user.all_staff.flatten
       all << root_children unless root_children.empty?
