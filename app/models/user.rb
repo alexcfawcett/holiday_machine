@@ -35,6 +35,8 @@ class User < ActiveRecord::Base
         manager_id,
         manager_id
     )}
+  #Active managers only
+  scope :active_managers, ->{where('confirmed_at NOT NULL AND user_type_id = 2')}
 
   ## Instance methods
   def full_name

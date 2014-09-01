@@ -11,7 +11,7 @@
         <%= f.input :email, :autofocus => true %>
         <%= f.input :forename %>
         <%= f.input :surname %>
-        <%= f.input :manager_id, :as => :select, :collection => User.where("user_type_id = 2"),
+        <%= f.input :manager_id, :as => :select, :collection => User.active_managers,
                     :label_method => :full_name, :value_method => :id, :prompt => "Choose a manager" %>
         <br />
         <%= f.input :password,  label: 'New password' %>
