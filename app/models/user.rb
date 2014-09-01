@@ -125,7 +125,7 @@ class User < ActiveRecord::Base
 end
 
 def validate_not_own_manager
-  if id == manager_id
+  if manager_id != nil && id == manager_id
     errors.add(:manager_id, 'cannot be self')
   end
 end

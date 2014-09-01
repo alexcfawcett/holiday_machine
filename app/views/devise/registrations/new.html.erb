@@ -6,14 +6,14 @@
     <%= simple_form_for(resource, :as => resource_name, :url => registration_path(resource_name)) do |f| %>
         <%#= devise_error_messages! %>
         <%= render 'shared/error_messages', object: f.object %>
-        <%= f.input :email, :required => true, :autofocus => true %>
-        <%= f.input :password, :required => true %>
-        <%= f.input :password_confirmation, :required => true %>
-        <%= f.input :forename %>
-        <%= f.input :surname %>
-        <%= f.input :invite_code %>
-        <%= f.association :user_type, :collection => UserType.all, :selected => 1 %>
-        <%= f.input :manager_id, :as => :select, :collection => User.active_managers, :label_method => :full_name, :value_method => :id, :prompt => "Choose a manager" %>
+        <%= f.input :email, :required => true, :autofocus => true, error: false %>
+        <%= f.input :password, :required => true, error: false %>
+        <%= f.input :password_confirmation, :required => true, error: false %>
+        <%= f.input :forename, error: false %>
+        <%= f.input :surname, error: false %>
+        <%= f.input :invite_code, error: false %>
+        <%= f.association :user_type, :collection => UserType.all, :selected => 1, error: false %>
+        <%= f.input :manager_id, :as => :select, :collection => User.active_managers, :label_method => :full_name, :value_method => :id, :prompt => "Choose a manager", error: false %>
         <%= f.button :submit, "Create my account", class: "btn btn-large btn-primary" %>
 
     <% end %>
