@@ -4,11 +4,9 @@ require "spec_helper"
 
 describe Absence do
 
-  let(:manager) {User.create! forename: "Bob", surname: "Manager", invite_code: "Sage1nvite00", email: "test2@bar.com",
-                          manager_id: 1, user_type_id: 2, password: "password", password_confirmation: "password"}
+  let!(:manager) {FactoryGirl.create(:manager)}
 
-  let(:user) {User.create! forename: "Bob", surname: "Builder", invite_code: "Sage1nvite00", email: "test@bar.com",
-                       manager_id: 1, user_type_id: 1, password: "password", password_confirmation: "password"}
+  let!(:user) {FactoryGirl.create(:user, manager_id: manager.id)}
 
   context 'on creation' do
     context 'if user does not exist' do
@@ -53,11 +51,10 @@ describe Absence do
 
     let(:today) {DateTime.now.strftime("%d/%m/%Y")}
     let(:next_monday) {Date.commercial(Date.today.year, 1+Date.today.cweek, 1).strftime("%d/%m/%Y")}
-    let!(:inactive_absence) {Absence.create!(date_from: next_monday, date_to: next_monday,
-                                             description: "Test description", holiday_status_id: 1, absence_type_id: 1,
-                                             user_id: user.id)}
-    let!(:active_absence) {Absence.create!(date_from: today, date_to: today, description: "Test description",
-                                           holiday_status_id: 1, absence_type_id: 1, user_id: user.id)}
+    let!(:inactive_absence) {user.absences.create!(date_from: next_monday, date_to: next_monday,
+                                             description: "Test description", holiday_status_id: 1, absence_type_id: 1)}
+    let!(:active_absence) {user.absences.create!(date_from: today, date_to: today, description: "Test description",
+                                           holiday_status_id: 1, absence_type_id: 1)}
 
     subject { active_absence }
 
@@ -68,6 +65,7 @@ describe Absence do
     its(:user_id) { should eq(user.id) }
 
     describe '.active_team_holidays' do
+      
       it 'should have the correct record count' do
         Absence.active_team_holidays(user.manager_id).count.should eq(1.0)
       end
