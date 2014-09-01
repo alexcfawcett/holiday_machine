@@ -31,12 +31,23 @@ describe "User pages" do
         fill_in "user_password_confirmation", with: "password"
         fill_in "Forename",      with: "Foo"
         fill_in "Surname", with: "Bar"
-        page.select('Manager', from: 'User type')
+        page.select('Standard', from: 'User type')
         fill_in "Invite code", with: "Sage1nvite00"
       end
 
       it "should create a user" do
         expect { click_button submit }.to change(User, :count).by(1)
+      end
+
+      context "when Manager type is selected" do
+        before do
+          page.select('Manager', from: 'User type')
+          click_button submit
+        end
+        it "creates a manager account" do
+          user_type = User.last.user_type.name
+          expect(user_type).to eql('Manager')
+        end
       end
 
       describe "after saving the user" do
