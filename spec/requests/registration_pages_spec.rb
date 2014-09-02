@@ -31,12 +31,23 @@ describe "User pages" do
         fill_in "user_password_confirmation", with: "password"
         fill_in "Forename",      with: "Foo"
         fill_in "Surname", with: "Bar"
-        page.select('Manager', from: 'User type')
+        page.select('Standard', from: 'User type')
         fill_in "Invite code", with: "Sage1nvite00"
       end
 
       it "should create a user" do
         expect { click_button submit }.to change(User, :count).by(1)
+      end
+
+      context "when Manager type is selected" do
+        before do
+          page.select('Manager', from: 'User type')
+          click_button submit
+        end
+        it "creates a manager account" do
+          user_type = User.last.user_type.name
+          expect(user_type).to eql('Manager')
+        end
       end
 
       describe "after saving the user" do
@@ -64,7 +75,7 @@ describe "User pages" do
 
         it { should have_selector('h3', text: "#{new_forename} #{user.surname}") }
         it { should have_selector('div.alert.alert', text: I18n.t('devise.registrations.updated')) }
-        it { should have_link('Sign out', href: sign_out_path) }
+        it { should have_link('Sign Out', href: sign_out_path) }
         specify { expect(user.reload.forename).to  eq new_forename }
       end
 
@@ -86,13 +97,8 @@ describe "User pages" do
             click_button "Save changes"
           end
           it { should have_selector('div.alert.alert', text: I18n.t('devise.registrations.updated')) }
-
-          # This fails but saving seems to work in dev
-          # TODO: Fix this test
-          #specify { expect(user).to change(password).to  new_password }
           it 'should save the users new password' do
-            user.reload
-            user.password.should == new_password
+            expect{user.reload}.to change{user.encrypted_password}
           end
         end
       end

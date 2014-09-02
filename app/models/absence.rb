@@ -33,9 +33,9 @@ class Absence < ActiveRecord::Base
   scope :user_holidays, lambda { |user_id| where(:user_id => user_id).order('date_from ASC') }
   scope :per_holiday_year, lambda { |holiday_year_id| where(:holiday_year_id => holiday_year_id) }
 
-  scope :active, lambda { where("? BETWEEN date_from AND date_to",DateTime.now)}
+  scope :active, lambda { where("? BETWEEN date_from AND date_to",Absence.time_string)}
   scope :in_between, lambda { |from_date, to_date|  where "date_from >= ? and date_to <= ?", from_date, to_date}
-  scope :upcoming, lambda { where("date_from BETWEEN ? AND ?", DateTime.now, DateTime.now + 1.weeks)}
+  scope :upcoming, lambda { where("date_from BETWEEN ? AND ?", Absence.time_string, Absence.time_string(Time.zone.now + 1.weeks))}
 
   scope :team_holidays, lambda { |manager_id| where(user_id: User.get_team_users(manager_id))}
   scope :active_team_holidays, lambda { |manager_id| where(user_id: User.get_team_users(manager_id)).
@@ -300,6 +300,11 @@ class Absence < ActiveRecord::Base
     return true if date_to_check.wday == 6 or date_to_check.wday == 0
     bank_holidays = BankHoliday.all
     return bank_holidays.collect{|hol| hol.date_of_hol}.include?(date_to_check.to_date)
+  end
+  
+  def self.time_string(time_obj=nil)
+    time_obj ||= Time.zone.now
+    time_obj.strftime('%Y-%m-%d %H:%M:%S')
   end
 
 end

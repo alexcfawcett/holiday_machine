@@ -8,15 +8,16 @@
         <%#= devise_error_messages! %>
         <%= render 'shared/error_messages', object: f.object %>
 
-        <%= f.input :email, :autofocus => true %>
-        <%= f.input :forename %>
-        <%= f.input :surname %>
-        <%= f.input :manager_id, :as => :select, :collection => User.where("user_type_id = 2"),
-                    :label_method => :full_name, :value_method => :id, :prompt => "Choose a manager" %>
+        <%= f.input :email, :autofocus => true, error: false %>
+        <%= f.input :forename, error: false %>
+        <%= f.input :surname, error: false %>
+        <%= f.input :manager_id, :as => :select, :collection => User.active_managers,
+                    :label_method => :full_name, :value_method => :id, 
+                    :prompt => "Choose a manager", error: false %>
         <br />
-        <%= f.input :password,  label: 'New password' %>
-        <%= f.input :password_confirmation, label: 'New password confirmation'%>
-        <%= f.input :current_password %>
+        <%= f.input :password,  label: 'New password', error: false %>
+        <%= f.input :password_confirmation, label: 'New password confirmation', error: false %>
+        <%= f.input :current_password, error: false %>
 
         <%= f.button :submit, "Save changes", class: "btn btn-large btn-primary" %>
 

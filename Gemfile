@@ -4,7 +4,7 @@ ruby "2.0.0"
 gem 'rails', '4.0.0'
 gem 'pg'
 gem "devise", "~> 3.1.1"
-gem 'devise_invitable'
+gem 'devise_invitable', "~> 1.3.1"
 gem 'devise-encryptable'
 gem 'simple_form'
 gem 'uuid'
@@ -24,6 +24,7 @@ gem 'sprockets-rails'
 gem 'jquery-rails'
 gem 'jquery-ui-rails'
 gem 'turbolinks'
+gem 'jquery-turbolinks'
 gem 'fullcalendar-rails'
 gem 'less-rails'
 gem 'semantic-ui-rails'

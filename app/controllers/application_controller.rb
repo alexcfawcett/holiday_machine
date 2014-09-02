@@ -52,5 +52,9 @@ class ApplicationController < ActionController::Base
                                                                     :password, :password_confirmation,
                                                                     :current_password) }
 
+    devise_parameter_sanitizer.for(:invite).concat [:user_type_id, :manager_id]
+
+    devise_parameter_sanitizer.for(:accept_invitation).concat [:forename, :surname]
+
   end
 end

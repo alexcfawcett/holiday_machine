@@ -11,7 +11,11 @@ class User < ActiveRecord::Base
 
   ## Associations
   belongs_to :manager, :class_name => 'User', :foreign_key => 'manager_id'
-  has_many :employees, :class_name => 'User', :foreign_key => "manager_id"
+  has_many :employees, :class_name => 'User', :foreign_key => "manager_id" do
+    def active_only
+      where('confirmed_at NOT NULL')
+    end
+  end
 
   belongs_to :user_type
   has_many :user_days, dependent: :destroy
@@ -22,16 +26,22 @@ class User < ActiveRecord::Base
   validates_presence_of :email, :forename, :surname, :user_type
   validates_presence_of :invite_code, :on => :create
   validates_each :invite_code, :on => :create do |record, attr, value|
-    record.errors.add attr, "Please enter correct invite code" unless value && value == "Sage1nvite00"
+    record.errors.add attr, "incorrect invite code" unless value && value == "Sage1nvite00"
   end
+  validate :validate_not_own_manager
 
   attr_accessor :invite_code
   attr_accessible :email, :password, :password_confirmation, :forename, :surname, :user_type_id, :manager_id, :invite_code, :invitation_token, :remember_me
 
   ## Scopes
   #Includes self if manager
-  scope :get_team_users, lambda { |manager_id| where('(manager_id = ? or id = ?)', #and confirmed_at is not null
-                                                     manager_id, manager_id) }
+  scope :get_team_users, lambda { |manager_id| where(
+        '(users.manager_id = ? or users.id = ?) AND confirmed_at NOT NULL',
+        manager_id,
+        manager_id
+    )}
+  #Active managers only
+  scope :active_managers, ->{where('confirmed_at NOT NULL AND user_type_id = 2')}
 
   ## Instance methods
   def full_name
@@ -87,7 +97,7 @@ class User < ActiveRecord::Base
 
   def all_staff
     all = []
-    self.employees.each do |user|
+    self.employees.active_only.each do |user|
       all << user
       root_children = user.all_staff.flatten
       all << root_children unless root_children.empty?
@@ -115,5 +125,11 @@ class User < ActiveRecord::Base
       token = Devise.friendly_token
       break token unless User.where(authentication_token: token).first
     end
+  end
+end
+
+def validate_not_own_manager
+  if manager_id != nil && id == manager_id
+    errors.add(:manager_id, 'cannot be self')
   end
 end

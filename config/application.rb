@@ -30,5 +30,6 @@ module HolidayMachine
         'lib',
     ]
     config.autoload_paths += load_paths.map { |path| config.root + path }
+    config.time_zone = 'London'
   end
 end
