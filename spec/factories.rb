@@ -25,8 +25,8 @@ FactoryGirl.define do
   factory :vacation do
     half_day_from "Full Day"
     half_day_to "Full Day"
-    date_from DateTime.now.strftime("%d/%m/%Y")
-    date_to (DateTime.now + 1.week).strftime("%d/%m/%Y")
+    date_from Time.zone.now.strftime("%d/%m/%Y")
+    date_to (Time.zone.now + 1.week).strftime("%d/%m/%Y")
     holiday_status_id 1
     holiday_year_id 1
     description "1 weeks holiday"

@@ -40,8 +40,8 @@ end
 def make_absence(user, options={})
 
   default_options = {
-      :date_from => (Time.now).strftime('%d/%m/%Y'),
-      :date_to => (Time.now + 1.day).strftime('%d/%m/%Y'),
+      :date_from => (Time.zone.now).strftime('%d/%m/%Y'),
+      :date_to => (Time.zone.now + 1.day).strftime('%d/%m/%Y'),
       :absence_type_id => 1,
       :holiday_status_id => 1,
       :description => "Test Holiday"

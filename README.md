@@ -3,6 +3,8 @@ Holiday Machine [Rails 4]
 
 A web application for managing employee holiday allowance and allocation, built in Ruby on Rails 4.
 
+This branch is in development, the application is not yet stable enough for release.
+
 
 Requirements
 -----------
@@ -63,12 +65,10 @@ bundle exec rspec
 
 **Please note:** the specs require the database to be correctly seeded. Some IDE configurations have been shown to wipe the seed data before running the specs. *All specs should pass.* If you have mass-failure, this may be the cause. Rebuild your test database and run the specs by following the steps above.
 
-**Also:** there is an ongoing issue that causes four specs in *spec/models/absence_spec.rb* to fail when ran before 10am (confirmed during BST). This issue needs to be resolved.
-
 
 Todo 
 -------------
-* Investigate and resolve the morning issues in: spec/models/absence_spec.rb
+* Fix “Update allowance” forms on “Manage Allowances” page
 * Fix "View" links on "Manage Absences" page
 * Fix the year selection on "Manage Allowances" page
 * Fix holiday rejection; allowance is not always replenished
@@ -80,11 +80,18 @@ Todo
 * Replace the secret_token (config/initializers/secret_token.rb) with env var for production
 * Revisit the calendar drop down options and clarify
 * Revisit the "Reports" table, this page could become very long and unusable
+* Revisit “Active Team Holidays” list, is this working correctly for both user types?
 * Refactor Rspec tests, manually test and add additional specs and fixes where necessary
 * Refactor codebase as needed, multiple unused files and routes exist
 * Refactor CSS, clean up the Twitter Bootstrap integration
 * Browser-test and improve the general style and appearance as necessary
 * Add localisation, as needed
+
+
+Notes
+-------------
+* Orphaned holiday records cause multiple parts of the system to fail (do not manually delete users from the database)
+* Application-wide timezone config has been set (this will affect legacy database records)
 
 
 License

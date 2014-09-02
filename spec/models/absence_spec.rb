@@ -49,8 +49,8 @@ describe Absence do
 
   context 'after creation' do
 
-    let(:today) {DateTime.now.strftime("%d/%m/%Y")}
-    let(:next_monday) {Date.commercial(Date.today.year, 1+Date.today.cweek, 1).strftime("%d/%m/%Y")}
+    let(:today) {Time.zone.now.strftime("%d/%m/%Y")}
+    let(:next_monday) {Date.commercial(Date.today.year, 1+Date.today.cweek, 1).in_time_zone.strftime("%d/%m/%Y")}
     let!(:inactive_absence) {user.absences.create!(date_from: next_monday, date_to: next_monday,
                                              description: "Test description", holiday_status_id: 1, absence_type_id: 1)}
     let!(:active_absence) {user.absences.create!(date_from: today, date_to: today, description: "Test description",
