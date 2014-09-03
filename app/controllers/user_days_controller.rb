@@ -27,7 +27,7 @@ class UserDaysController < ApplicationController
   # POST /user_days
   # POST /user_days.xml
   def create
-    @user_day = UserDay.new(params[:user_day])
+    @user_day = UserDay.new(user_day_params)
 
     if params[:user_day][:holiday_year_id]
       @user_day.holiday_year = HolidayYear.find(params[:user_day][:holiday_year_id])
@@ -51,6 +51,12 @@ class UserDaysController < ApplicationController
         format.html { redirect_to user_days_url, :flash => { :holiday_year_id => holiday_year_id } }
       end
     end
+  end
+  
+  private
+  
+  def user_day_params
+    params.require(:user_day).permit(:no_days, :user_id, :holiday_year_id, :reason)
   end
 
 end

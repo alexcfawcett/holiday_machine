@@ -5,6 +5,8 @@ class UserDay < ActiveRecord::Base
   belongs_to :user
   belongs_to :holiday_year
 
+  attr_accessible :user_id, :no_days, :reason, :holiday_year_id
+  
   validates_presence_of :user_id
   validates_presence_of :no_days
   validates_presence_of :reason
