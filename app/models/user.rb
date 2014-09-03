@@ -62,8 +62,7 @@ class User < ActiveRecord::Base
   end
 
   def get_holiday_allowance_for_selected_year year
-    user_holiday_year = UserDaysForYear.where("user_id = ? and holiday_year_id = ?", self.id,year.id).first
-    user_holiday_year.days_remaining
+    UserDaysForYear.where("user_id = ? and holiday_year_id = ?", self.id,year.id).first
   end
 
   # Change (or remove) this to use above method

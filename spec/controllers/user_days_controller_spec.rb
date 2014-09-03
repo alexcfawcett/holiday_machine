@@ -16,39 +16,40 @@ describe UserDaysController do
   end
 
   describe "GET index" do
-    it "assigns all user_days as @user_days" do
-      pending "no it doesn't"
-      UserDay.stub(:all) { [mock_user_day] }
+    it "assigns user_day as @mock_user_day" do
+      User.stub(:get_team_users) { [] }
+      controller.stub(:current_user){ FactoryGirl.build(:manager) }
+      UserDay.stub(:new) { mock_user_day }
       get :index
-      assigns(:user_days).should eq([mock_user_day])
+      assigns(:user_day).should eq(mock_user_day)
     end
   end
 
   describe "POST create" do
     describe "with valid params" do
       it "assigns a newly created user_day as @user_day" do
-        UserDay.stub(:new).with({'these' => 'params'}) { mock_user_day(:save => true) }
-        post :create, :user_day => {'these' => 'params'}
+        UserDay.stub(:new) { mock_user_day(:save => true) }
+        post :create, :user_day => {user_day: {}}
         assigns(:user_day).should be(mock_user_day)
       end
 
       it "redirects to the user days root" do
         UserDay.stub(:new) { mock_user_day(:save => true) }
-        post :create, :user_day => {}
+        post :create, :user_day => {user_day: {}}
         response.should redirect_to(user_days_url)
       end
     end
 
     describe "with invalid params" do
       it "assigns a newly created but unsaved user_day as @user_day" do
-        UserDay.stub(:new).with({'these' => 'params'}) { mock_user_day(:save => false) }
-        post :create, :user_day => {'these' => 'params'}
+        UserDay.stub(:new) { mock_user_day(:save => false) }
+        post :create, :user_day => {user_day: {}}
         assigns(:user_day).should be(mock_user_day)
       end
 
       it "redirects to the user days root" do
         UserDay.stub(:new) { mock_user_day(:save => false) }
-        post :create, :user_day => {}
+        post :create, :user_day => {user_day: {}}
         response.should redirect_to(user_days_url)
       end
     end

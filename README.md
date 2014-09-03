@@ -68,18 +68,19 @@ bundle exec rspec
 
 Todo 
 -------------
-* Fix “Update allowance” forms on “Manage Allowances” page
 * Fix "View" links on "Manage Absences" page
 * Fix the year selection on "Manage Allowances" page
 * Fix holiday rejection; allowance is not always replenished
 * Add help and contact pages (covering lost passwords, etc)
 * Test and lock down routes as needed (users should not be able to access manager-only areas)
-* Replace the Gmail details in config with environment variables, and the change password
-* If possible, replace Gmail SMTP with something else (hourly and daily send limits cause exceptions)
-* Alternatively, configure devise to intelligently handle SMTP send rejection (if possible)
+* Replace the SMTP details in config with environment variables, and the change password
+* Replace Gmail SMTP with something else (hourly and daily send limits cause exceptions), OR:
+* Configure devise to intelligently handle SMTP send rejection (if possible)
 * Replace the secret_token (config/initializers/secret_token.rb) with env var for production
 * Revisit the calendar drop down options and clarify
 * Revisit the "Reports" table, this page could become very long and unusable
+* On registration, calculate number of holiday days remaining based on current date
+* On invitation, allow manager to set the number of holiday days remaining
 * Revisit “Active Team Holidays” list, is this working correctly for both user types?
 * Refactor Rspec tests, manually test and add additional specs and fixes where necessary
 * Refactor codebase as needed, multiple unused files and routes exist
