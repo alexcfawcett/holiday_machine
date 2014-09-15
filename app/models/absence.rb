@@ -1,6 +1,6 @@
 class Absence < ActiveRecord::Base
 
-  attr_accessible :date_from, :date_to, :description, :holiday_status_id, :user_id, :absence_type_id
+  attr_accessible :date_from, :date_to, :description, :holiday_status_id, :user_id, :absence_type_id, :half_day_from, :half_day_to
   attr_accessor :half_day_from, :half_day_to
 
   HOL_COLOURS = %W{#FDF5D9 #D1EED1 #FDDFDE #DDF4Fb}
@@ -13,17 +13,17 @@ class Absence < ActiveRecord::Base
   belongs_to :absence_type
 
   # Validation
- validates :date_from, :date_to, :description, :holiday_status_id, :user_id, :absence_type_id, presence: true
- validate :holiday_must_not_straddle_holiday_years
- validate :half_days_not_on_working_days, :on => :create
- validate :dont_exceed_days_remaining, :on => :create
- validate :date_from_must_be_before_date_to
- validate :working_days_greater_than_zero
- validate :no_overlapping_holidays, :on => :create
+  validates :date_from, :date_to, :description, :holiday_status_id, :user_id, :absence_type_id, presence: true
+  validate :holiday_must_not_straddle_holiday_years
+  validate :half_days_not_on_working_days, :on => :create
+  validate :dont_exceed_days_remaining, :on => :create
+  validate :date_from_must_be_before_date_to
+  validate :working_days_greater_than_zero
+  validate :no_overlapping_holidays, :on => :create
 
   # Callbacks
-  # TODO re-implement these
-  #before_save :set_half_days, :set_working_days
+  before_validation :adjust_half_days
+  before_save :set_half_days
   before_save :set_working_days
   after_create :decrease_days_remaining
   before_destroy :check_if_holiday_has_passed
@@ -102,13 +102,13 @@ class Absence < ActiveRecord::Base
   def half_days_not_on_working_days
     return if date_from.nil?
 
-   if date_on_non_working_day(date_from) && half_day_from != "Full Day"
-     errors.add(:date_from, "- your half day falls on a non-working day")
-     false
-   elsif date_on_non_working_day(date_to) && half_day_to != "Full Day"
-     errors.add(:date_to, "- your half day falls on a non-working day")   
-     false
-   end
+    if date_on_non_working_day(date_from) && half_day_from != "Full Day"
+      errors.add(:date_from, "- your half day falls on a non-working day")
+      false
+    elsif date_on_non_working_day(date_to) && half_day_to != "Full Day"
+      errors.add(:date_to, "- your half day falls on a non-working day")
+      false
+    end
   end
 
   def check_if_holiday_has_passed
@@ -192,7 +192,7 @@ class Absence < ActiveRecord::Base
   end
 
   def set_working_days
-    self[:working_days_used] = @working_days - half_day_adjustment
+    self[:working_days_used] = @working_days
 
     unless self[:uuid]
       guid = UUID.new
@@ -202,30 +202,29 @@ class Absence < ActiveRecord::Base
     unless self[:holiday_year]
       self.holiday_year = HolidayYear.holiday_year_used(self[:date_from], self[:date_to]).first
     end
-
   end
 
   def business_days_between
+    @half_day_adjustment ||=0
     bank_holidays = BankHoliday.in_between(date_from - 1.day, date_to + 1.day)
     holidays_array = bank_holidays.collect { |hol| hol.date_of_hol }
     weekdays = (date_from.to_date..date_to.to_date).reject { |d| [0, 6].include? d.wday or holidays_array.include?(d) }
-    business_days = weekdays.length - half_day_adjustment
-    # TODO need better solution to this bug
-    # business_days = 0.5 if business_days == 1 && half_day_from == half_day_to && half_day_from.include?("Half Day")
+    business_days = weekdays.length - @half_day_adjustment
     business_days
   end
 
   def decrease_days_remaining
-    return unless self.absence_type_id == 1 #Only holidays affect the days remaining
-    holiday_allowance = self.user.get_holiday_allowance_for_dates self.date_from, self.date_to
+    return unless absence_type_id == 1 #Only holidays affect the days remaining
+    holiday_allowance = user.get_holiday_allowance_for_dates date_from.to_date, date_to.to_date
     holiday_allowance.days_remaining -= business_days_between
     holiday_allowance.save
   end
 
+  # Adds days back when deleting leave
   def add_days_remaining
-    return unless self.absence_type_id == 1 #Only holidays affect the days remaining
-    holiday_allowance = self.user.get_holiday_allowance_for_dates self.date_from, self.date_to
-    holiday_allowance.days_remaining += business_days_between
+    return unless absence_type_id == 1 #Only holidays affect the days remaining
+    holiday_allowance = user.get_holiday_allowance_for_dates date_from.to_date, date_to.to_date
+    holiday_allowance.days_remaining += self.working_days_used
     holiday_allowance.save
   end
 
@@ -243,7 +242,6 @@ class Absence < ActiveRecord::Base
     errors.add(:working_days_used, "-Number of days selected exceeds your allowance!") if holiday_allowance.days_remaining < business_days_between
   end
 
-  # TODO: This currently does not work
   def set_half_days
     if date_from.to_date == date_to.to_date
       #Ensure the half days match
@@ -279,21 +277,22 @@ class Absence < ActiveRecord::Base
     end
   end
 
-  def half_day_adjustment
-    half_day_adjustment = 0.0
+  def adjust_half_days
+    @half_day_adjustment = 0.0
     if self.date_from.to_date == self.date_to.to_date
-      if self.date_from.hour == 13 || self.date_to.hour == 12
-        half_day_adjustment += 0.5
+      if half_day_from == half_day_to && half_day_from.include?('Half')
+        @half_day_adjustment = 0.5
       end
     else
-      if self.date_from.hour == 13
-        half_day_adjustment += 0.5
-      end
-      if self.date_to.hour == 12
-        half_day_adjustment += 0.5
+      if half_day_from != half_day_to
+        if half_day_from.include?('Half') && half_day_to.include?('Half')
+          @half_day_adjustment = 1
+        elsif half_day_from.include?('Half') || half_day_to.include?('Half')
+          @half_day_adjustment = 0.5
+        end
       end
     end
-    half_day_adjustment
+    @half_day_adjustment
   end
 
   def date_on_non_working_day date_to_check
@@ -306,5 +305,4 @@ class Absence < ActiveRecord::Base
     time_obj ||= Time.zone.now
     time_obj.strftime('%Y-%m-%d %H:%M:%S')
   end
-
 end
