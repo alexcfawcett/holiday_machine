@@ -21,36 +21,36 @@ describe UserDaysController do
       controller.stub(:current_user){ FactoryGirl.build(:manager) }
       UserDay.stub(:new) { mock_user_day }
       get :index
-      assigns(:user_day).should eq(mock_user_day)
+      expect(assigns(:user_day)).to eq(mock_user_day)
     end
   end
 
   describe "POST create" do
     describe "with valid params" do
       it "assigns a newly created user_day as @user_day" do
-        UserDay.stub(:new) { mock_user_day(:save => true) }
-        post :create, :user_day => {user_day: {}}
-        assigns(:user_day).should be(mock_user_day)
+        UserDay.stub(:new) { mock_user_day(save: true) }
+        post :create, user_day: { user_day: {} }
+        expect(assigns(:user_day)).to be(mock_user_day)
       end
 
       it "redirects to the user days root" do
-        UserDay.stub(:new) { mock_user_day(:save => true) }
-        post :create, :user_day => {user_day: {}}
-        response.should redirect_to(user_days_url)
+        UserDay.stub(:new) { mock_user_day(save: true) }
+        post :create, user_day: { user_day: {} }
+        expect(response).to redirect_to(user_days_url)
       end
     end
 
     describe "with invalid params" do
       it "assigns a newly created but unsaved user_day as @user_day" do
-        UserDay.stub(:new) { mock_user_day(:save => false) }
-        post :create, :user_day => {user_day: {}}
-        assigns(:user_day).should be(mock_user_day)
+        UserDay.stub(:new) { mock_user_day(save: false) }
+        post :create, user_day: { user_day: {} }
+        expect(assigns(:user_day)).to be(mock_user_day)
       end
 
       it "redirects to the user days root" do
-        UserDay.stub(:new) { mock_user_day(:save => false) }
-        post :create, :user_day => {user_day: {}}
-        response.should redirect_to(user_days_url)
+        UserDay.stub(:new) { mock_user_day(save: false) }
+        post :create, user_day: { user_day: {} }
+        expect(response).to redirect_to(user_days_url)
       end
     end
   end
