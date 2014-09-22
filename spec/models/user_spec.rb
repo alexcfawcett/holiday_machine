@@ -16,16 +16,16 @@ describe User do
     end
 
     it "gives the correct fullname" do
-      subject.full_name.should == @user.forename + " " + @user.surname
+      expect(subject.full_name).to eq(@user.forename + " " + @user.surname)
     end
 
     it 'has correct number of holiday years' do
-      subject.user_days_for_years.count == 3
+      expect(subject.user_days_for_years.count).to eq(3)
     end
 
     it 'has the correct base holiday allowance for all years' do
       HolidayYear.all.each do |year|
-        subject.holidays_left(year).should ==  BigDecimal.new('25.00')
+        expect(subject.holidays_left(year)).to eq(BigDecimal.new('25.00'))
       end
     end
 

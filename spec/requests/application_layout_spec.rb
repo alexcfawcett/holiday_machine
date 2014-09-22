@@ -8,38 +8,38 @@ describe "Application Layout" do
   subject {page}
 
   shared_examples_for "all authentication states" do
-    it { should have_link('Holiday Thyme', href: root_path) }
-    it { should have_link('GitHub') }
-    it { should have_link('Help') }
-    it { should have_link('Contact') }
+    it { expect(subject).to have_link('Holiday Thyme', href: root_path) }
+    it { expect(subject).to have_link('GitHub') }
+    it { expect(subject).to have_link('Help') }
+    it { expect(subject).to have_link('Contact') }
   end
   
   shared_examples_for "authenticated as user" do
-    it { should_not have_link('Sign In', href: sign_in_path) }
-    it { should have_link('Calendar', href: calendar_index_path) }
-    it { should have_link('My Settings', href: edit_user_registration_path) }
-    it { should have_link('Sign Out', href: sign_out_path) }
+    it { expect(subject).to_not have_link('Sign In', href: sign_in_path) }
+    it { expect(subject).to have_link('Calendar', href: calendar_index_path) }
+    it { expect(subject).to have_link('My Settings', href: edit_user_registration_path) }
+    it { expect(subject).to have_link('Sign Out', href: sign_out_path) }
   end
 
   share_examples_for "NOT authenticated as user" do
-    it { should have_link('Sign In', href: sign_in_path) }
-    it { should_not have_link('Calendar', href: calendar_index_path) }
-    it { should_not have_link('My Settings', href: edit_user_registration_path) }
-    it { should_not have_link('Sign Out', href: sign_out_path) }
+    it { expect(subject).to have_link('Sign In', href: sign_in_path) }
+    it { expect(subject).to_not have_link('Calendar', href: calendar_index_path) }
+    it { expect(subject).to_not have_link('My Settings', href: edit_user_registration_path) }
+    it { expect(subject).to_not have_link('Sign Out', href: sign_out_path) }
   end
 
   shared_examples_for "authenticated as manager" do
-    it { should have_link('Invitations', href: new_user_invitation_path) }
-    it { should have_link('Absences', href: administer_index_path) }
-    it { should have_link('Allowances', href: user_days_path) }
-    it { should have_link('Reports', href: reports_path) }
+    it { expect(subject).to have_link('Invitations', href: new_user_invitation_path) }
+    it { expect(subject).to have_link('Absences', href: administer_index_path) }
+    it { expect(subject).to have_link('Allowances', href: user_days_path) }
+    it { expect(subject).to have_link('Reports', href: reports_path) }
   end
   
   share_examples_for "NOT authenticated as manager" do
-    it { should_not have_link('Invitations', href: new_user_invitation_path) }
-    it { should_not have_link('Absences', href: administer_index_path) }
-    it { should_not have_link('Allowances', href: user_days_path) }
-    it { should_not have_link('Reports', href: reports_path) }
+    it { expect(subject).to_not have_link('Invitations', href: new_user_invitation_path) }
+    it { expect(subject).to_not have_link('Absences', href: administer_index_path) }
+    it { expect(subject).to_not have_link('Allowances', href: user_days_path) }
+    it { expect(subject).to_not have_link('Reports', href: reports_path) }
   end
   
   context "when NOT signed in" do

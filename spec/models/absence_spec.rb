@@ -16,7 +16,7 @@ describe Absence do
       end
 
       it "should not be valid" do
-        @absence.should_not be_valid
+        expect(@absence).to_not be_valid
       end
     end
 
@@ -30,7 +30,7 @@ describe Absence do
       end
 
       it "should not be valid" do
-        @absence.should_not be_valid
+        expect(@absence).to_not be_valid
       end
     end
 
@@ -41,7 +41,7 @@ describe Absence do
       end
 
       it "should not be valid" do
-        @absence.should_not be_valid
+        expect(@absence).to_not be_valid
       end
     end
 
@@ -58,7 +58,7 @@ describe Absence do
 
     subject { active_absence }
 
-    it { should be_valid }
+    it { expect(subject).to be_valid }
     its(:description) { should eq("Test description") }
     its(:holiday_status_id) { should eq(1) }
     its(:absence_type_id) { should eq(1) }
@@ -67,29 +67,29 @@ describe Absence do
     describe '.active_team_holidays' do
       
       it 'should have the correct record count' do
-        Absence.active_team_holidays(user.manager_id).count.should eq(1.0)
+        expect(Absence.active_team_holidays(user.manager_id).count).to eq(1.0)
       end
 
       it 'should include active holidays' do
-        Absence.active_team_holidays(user.manager_id).should include(active_absence)
+        expect(Absence.active_team_holidays(user.manager_id)).to include(active_absence)
       end
 
       it 'should not include inactive holidays' do
-        Absence.active_team_holidays(user.manager_id).should_not include(inactive_absence)
+        expect(Absence.active_team_holidays(user.manager_id)).to_not include(inactive_absence)
       end
     end
 
     describe '.upcoming_team_holidays' do
       it 'should have the correct record count' do
-        Absence.upcoming_team_holidays(user.manager_id).count.should eq(1.0)
+        expect(Absence.upcoming_team_holidays(user.manager_id).count).to eq(1.0)
       end
 
       it 'should include upcoming holidays' do
-        Absence.upcoming_team_holidays(user.manager_id).should include(inactive_absence)
+        expect(Absence.upcoming_team_holidays(user.manager_id)).to include(inactive_absence)
       end
 
       it 'should not include active holidays' do
-        Absence.upcoming_team_holidays(user.manager_id).should_not include(active_absence)
+        expect(Absence.upcoming_team_holidays(user.manager_id)).to_not include(active_absence)
       end
     end
   end

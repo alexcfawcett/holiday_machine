@@ -24,13 +24,13 @@ describe "Invitation" do
       fill_in 'Email', with: invitee
       select 'Manager', from: 'User type'
       click_button 'Send invitation'
-      expect(User.last.user_type.name).to eql('Manager')
+      expect(User.last.user_type.name).to eq('Manager')
     end
 
     it "stores the invite sender as the user's manager" do
       fill_in 'Email', with: invitee
       click_button 'Send invitation'
-      expect(User.last.manager).to eql(manager)
+      expect(User.last.manager).to eq(manager)
     end
     
   end

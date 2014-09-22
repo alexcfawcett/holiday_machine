@@ -18,9 +18,9 @@ describe "User pages" do
       describe "after submission" do
         before { click_button submit }
 
-        it { should have_title('Sign up') }
+        it { expect(subject).to have_title('Sign up') }
 
-        it { should have_selector('div.alert.alert-error')}
+        it { expect(subject).to have_selector('div.alert.alert-error')}
       end
     end
 
@@ -53,7 +53,7 @@ describe "User pages" do
       describe "after saving the user" do
         before { click_button submit }
 
-        it { should have_selector('div.alert.alert') }
+        it { expect(subject).to have_selector('div.alert.alert') }
       end
     end
 
@@ -73,9 +73,9 @@ describe "User pages" do
           click_button "Save changes"
         end
 
-        it { should have_selector('h3', text: "#{new_forename} #{user.surname}") }
-        it { should have_selector('div.alert.alert', text: I18n.t('devise.registrations.updated')) }
-        it { should have_link('Sign Out', href: sign_out_path) }
+        it { expect(subject).to have_selector('h3', text: "#{new_forename} #{user.surname}") }
+        it { expect(subject).to have_selector('div.alert.alert', text: I18n.t('devise.registrations.updated')) }
+        it { expect(subject).to have_link('Sign Out', href: sign_out_path) }
         specify { expect(user.reload.forename).to  eq new_forename }
       end
 
@@ -88,7 +88,7 @@ describe "User pages" do
 
         context "without supplying a current password" do
           before {click_button "Save changes" }
-          it { should have_selector('div.alert.alert-error') }
+          it { expect(subject).to have_selector('div.alert.alert-error') }
         end
 
         context "with supplying a current password" do

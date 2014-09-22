@@ -8,8 +8,8 @@ describe CalendarController do
 
   describe "GET 'index'" do
     it "should be successful" do
-      get 'index', :format => :js
-      response.should be_success
+      get 'index', format: :js
+      expect(response).to be_success
     end
   end
 

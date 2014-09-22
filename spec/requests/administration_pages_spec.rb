@@ -11,11 +11,11 @@ describe "Administration pages" do
     visit administer_index_path
   end
   
-  it { should have_title( 'Manage Absences' ) }
-  
+  it { expect(subject).to have_title( 'Manage Absences' ) }
+
   context "with no subordinates" do
     
-    it { should have_content( 'No absences found.' ) }
+    it { expect(subject).to have_content( 'No absences found.' ) }
     
   end
   
