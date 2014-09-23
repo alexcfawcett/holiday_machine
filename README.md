@@ -85,6 +85,7 @@ Todo
 * Refactor CSS, clean up the Twitter Bootstrap integration
 * Browser-test and improve the general style and appearance as necessary
 * Add localisation, as needed
+* Look at the issues surrounding Half Days and get a fix in for this
 
 
 Notes

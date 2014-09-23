@@ -10,8 +10,8 @@ class User < ActiveRecord::Base
   #after_destroy :delete_all_allowances
 
   ## Associations
-  belongs_to :manager, :class_name => 'User', :foreign_key => 'manager_id'
-  has_many :employees, :class_name => 'User', :foreign_key => "manager_id" do
+  belongs_to :manager, class_name: 'User', foreign_key: 'manager_id'
+  has_many :employees, class_name: 'User', foreign_key: "manager_id" do
     def active_only
       where('confirmed_at NOT NULL')
     end
@@ -24,8 +24,8 @@ class User < ActiveRecord::Base
 
   ## Validations
   validates_presence_of :email, :forename, :surname, :user_type
-  validates_presence_of :invite_code, :on => :create
-  validates_each :invite_code, :on => :create do |record, attr, value|
+  validates_presence_of :invite_code, on: :create
+  validates_each :invite_code, on: :create do |record, attr, value|
     record.errors.add attr, "incorrect invite code" unless value && value == "Sage1nvite00"
   end
   validate :validate_not_own_manager
@@ -74,7 +74,6 @@ class User < ActiveRecord::Base
   end
 
   def create_allowance
-    today = Date.today
     base_holiday_allowance = 25
 
     holiday_years = HolidayYear.all

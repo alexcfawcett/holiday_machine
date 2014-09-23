@@ -133,15 +133,19 @@ class Absence < ActiveRecord::Base
       end
 
       if hol.user == current_user
-        hol_hash = {:id => hol.id, :title => [hol.user.forename, hol.description].join(": ") + " " + half_day, :start => hol.date_from.iso8601, :end => hol.date_to.iso8601, :color => HOL_COLOURS[hol.holiday_status_id - 1], :textColor => '#404040', :borderColor => BORDER_COLOURS[hol.holiday_status_id - 1], :type => 'holiday'}
+        hol_hash = { id: hol.id, title: [hol.user.forename, hol.description].join(": ") + " " + half_day, start: hol.date_from.iso8601,
+                     end: hol.date_to.iso8601, color: HOL_COLOURS[hol.holiday_status_id - 1], textColor: '#404040',
+                     borderColor: BORDER_COLOURS[hol.holiday_status_id - 1], type: 'holiday'}
       else
-        hol_hash = {:id => hol.id, :title=> hol.user.full_name + " " + half_day, :start => hol.date_from.iso8601, :end => hol.date_to.iso8601, :color => HOL_COLOURS[hol.holiday_status_id - 1], :textColor => '#404040', :borderColor => BORDER_COLOURS[hol.holiday_status_id - 1]}
+        hol_hash = { id: hol.id, title: hol.user.full_name + " " + half_day, start: hol.date_from.iso8601,
+                     end: hol.date_to.iso8601, color: HOL_COLOURS[hol.holiday_status_id - 1],
+                     textColor: '#404040', borderColor: BORDER_COLOURS[hol.holiday_status_id - 1]}
       end
       json << hol_hash
     end
 
     bank_holidays.each do |hol|
-      hol_hash = {:id => hol.id, :title => hol.name, :start => hol.date_of_hol.to_s, :color =>"black", :type => 'bank-holiday'}
+      hol_hash = { id: hol.id, title: hol.name, start: hol.date_of_hol.to_s, color: "black", type: 'bank-holiday'}
       json << hol_hash
     end
     json
@@ -160,8 +164,6 @@ class Absence < ActiveRecord::Base
   end
 
   def holiday_must_not_straddle_holiday_years
-    #puts ' ONE OR MORE DATES WHERE NIL' if date_to.nil? || date_from.nil?
-
     number_years = HolidayYear.holiday_years_containing_holiday(date_from, date_to).count
     errors.add(:base, "Holiday must not cross years") if number_years> 1
   end
