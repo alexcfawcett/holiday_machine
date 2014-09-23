@@ -61,6 +61,7 @@ describe "User pages" do
       let(:user) { create(:user) }
       let(:new_forename)  { "New Name" }
       let(:new_password) { "newpassword" }
+      let(:submit) { 'Save changes' }
 
       before do
         sign_in user
@@ -70,7 +71,7 @@ describe "User pages" do
       describe "with valid information" do
         before do
           fill_in "Forename", with: new_forename
-          click_button "Save changes"
+          click_button submit
         end
 
         it { expect(subject).to have_selector('h3', text: "#{new_forename} #{user.surname}") }
@@ -87,14 +88,15 @@ describe "User pages" do
         end
 
         context "without supplying a current password" do
-          before {click_button "Save changes" }
+          before {click_button submit }
           it { expect(subject).to have_selector('div.alert.alert-error') }
+          it { expect(subject).to have_content('The form contains 1 error') }
         end
 
         context "with supplying a current password" do
           before do
             fill_in "Current password", with: user.password
-            click_button "Save changes"
+            click_button submit
           end
           it { should have_selector('div.alert.alert', text: I18n.t('devise.registrations.updated')) }
           it 'should save the users new password' do

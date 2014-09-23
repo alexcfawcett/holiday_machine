@@ -23,7 +23,7 @@ class User < ActiveRecord::Base
   has_many :user_days_for_years, dependent: :destroy
 
   ## Validations
-  validates_presence_of :email, :forename, :surname, :user_type
+  validates_presence_of :forename, :surname, :user_type
   validates_presence_of :invite_code, on: :create
   validates_each :invite_code, on: :create do |record, attr, value|
     record.errors.add attr, "incorrect invite code" unless value && value == "Sage1nvite00"
