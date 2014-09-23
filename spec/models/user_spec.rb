@@ -4,7 +4,7 @@ describe User do
 
   before do
     @user = User.new forename: "Bob", surname: "Builder", invite_code: "Sage1nvite00", email: "test@bar.com",
-                         user_type_id: 1, password: "password", password_confirmation: "password"
+                         user_type_id: 1, password: "Passw0rd@", password_confirmation: "Passw0rd@"
     @user.save!
   end
 

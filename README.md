@@ -39,7 +39,7 @@ Logging In
 After installing, you can log in using the following manager account:
 
 **Email:** manager@example.com  
-**Password:** passwordpassword
+**Password:** Passw0rd@
 
 
 Signing Up
@@ -85,7 +85,7 @@ Todo
 * Refactor CSS, clean up the Twitter Bootstrap integration
 * Browser-test and improve the general style and appearance as necessary
 * Add localisation, as needed
-* Look at the issues surrounding Half Days and get a fix in for this
+* Password Strength - server function is now in place with tests done in the Edit User feature. Would be nice to get a client side feature in as well going forward too.
 
 
 Notes

@@ -5,8 +5,8 @@ FactoryGirl.define do
     forename "Eamon"
     surname "Skelly"
     sequence(:email) {|n| "person#{n}@example.com" }
-    password 'password'
-    password_confirmation 'password'
+    password 'Passw0rd@'
+    password_confirmation 'Passw0rd@'
     user_type_id 1
     invite_code "Sage1nvite00"
     confirmed_at Time.now #set confirmed_at so we don't need to send emails etc for test user
