@@ -134,7 +134,7 @@ end
 
 def validate_password_strength
   if password.present? and not password.match(/^.*(?=.{8,})(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=]).*$/)
-    errors.add(:password, 'Password must be at least 8 characters long, contain at least one lower case letter, one upper case letter,
+    errors.add(:password, 'must be at least 8 characters long, contain at least one lower case letter, one upper case letter,
     one digit + one special character. Valid special characters are: @, #, $, %, ^, &, +, = ')
   end
 end

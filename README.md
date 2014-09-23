@@ -10,7 +10,7 @@ Requirements
 -----------
 
 * ruby 2.0.0p247
-* Firefox to test Javascript using the Selenium gem. Check [Selenium changelog] for most recent supported Firefox version (Currently: v29  --v31 appears to work as of 01/09/14)
+* Firefox to test Javascript using the Selenium gem. Check [Selenium changelog] for most recent supported Firefox version (Currently: v31 works as of 23/09/2014)
 
 
 Installation
