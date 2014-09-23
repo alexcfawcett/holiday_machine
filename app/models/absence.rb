@@ -112,7 +112,7 @@ class Absence < ActiveRecord::Base
   end
 
   def check_if_holiday_has_passed
-    unless holiday_status_id == 1
+    if holiday_status_id == 2
       if date_to < Date.today
         errors.add(:base, "Holiday has passed")
         false

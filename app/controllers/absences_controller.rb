@@ -54,16 +54,17 @@ class AbsencesController < ApplicationController
 
   def update
     #TODO temp - to bypass the validation around half-days
-    ActiveRecord::Base.connection.execute("update absences set holiday_status_id = #{params[:absence][:holiday_status_id]} where id = #{params[:id]}")
 
+    holiday_status_id = params[:absence][:holiday_status_id].to_i
     @absence = Absence.find_by_id(params[:id])
-    vacation_user = @absence.user
-
-    if vacation_user.manager_id
-      manager = User.find_by_id(vacation_user.manager_id)
-      #TODO prevent holiday status being switched to pending
-      HolidayMailer.holiday_actioned(manager, @absence).deliver
+    if holiday_status_id == 3
+      @absence.destroy
+    else
+      @absence.holiday_status_id = holiday_status_id
+      @absence.save
     end
+
+    send_email_to_user
 
     respond_to do |format|
       flash[:notice] = "Status has been changed"
@@ -71,6 +72,8 @@ class AbsencesController < ApplicationController
     end
 
   end
+
+
 
 
   # DELETE /absences/1
@@ -119,5 +122,14 @@ class AbsencesController < ApplicationController
     @active_team_holidays = Absence.active_team_holidays(current_user.manager_id)
     @upcoming_team_holidays = Absence.upcoming_team_holidays(current_user)
 
+  end
+
+  def send_email_to_user
+    vacation_user = @absence.user
+    if vacation_user.manager_id
+      manager = User.find_by_id(vacation_user.manager_id)
+      #TODO prevent holiday status being switched to pending
+      HolidayMailer.holiday_actioned(manager, @absence).deliver
+    end
   end
 end
