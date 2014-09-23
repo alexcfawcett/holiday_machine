@@ -69,7 +69,6 @@ bundle exec rspec
 Todo 
 -------------
 * Fix "View" links on "Manage Absences" page
-* Fix holiday rejection; allowance is not always replenished
 * Add help and contact pages (covering lost passwords, etc)
 * Test and lock down routes as needed (users should not be able to access manager-only areas)
 * Replace the SMTP details in config with environment variables, and the change password
