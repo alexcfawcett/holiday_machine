@@ -16,6 +16,8 @@ gem "exception_notification"
 gem "protected_attributes"
 gem 'acts_as_tree'
 gem 'faker', '1.0.1'
+gem 'will_paginate', '3.0.7'
+gem 'bootstrap-will_paginate', '0.0.10'
 
 # TODO is this needed here??
 gem 'sprockets-rails'

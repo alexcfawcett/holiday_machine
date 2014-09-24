@@ -5,7 +5,7 @@ class ReportsController < ApplicationController
 
   def index
   	@current_year_id = HolidayYear.current_year.id
-  	@users = current_user.all_staff
+  	@users = current_user.employees.active_only.paginate(page: params[:page])
   end
 
  end
