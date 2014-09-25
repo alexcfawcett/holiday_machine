@@ -52,12 +52,12 @@ describe Absence do
     let(:today) {Time.zone.now.strftime("%d/%m/%Y")}
     let(:next_monday) {Date.commercial(Date.today.year, 1+Date.today.cweek, 1).in_time_zone.strftime("%d/%m/%Y")}
     let(:last_monday) {Date.commercial(Date.today.year, 1-Date.today.cweek, 1).in_time_zone.strftime("%d/%m/%Y")}
-    let(:inactive_absence) {user.absences.create!(date_from: next_monday, date_to: next_monday,
+    let!(:inactive_absence) {user.absences.create(date_from: next_monday, date_to: next_monday,
                                              description: "Test description", holiday_status_id: 1, absence_type_id: 1)}
-    let(:active_absence) {user.absences.create!(date_from: today, date_to: today, description: "Test description",
+    let!(:active_absence) {user.absences.create(date_from: today, date_to: today, description: "Test description",
                                            holiday_status_id: 1, absence_type_id: 1)}
 
-    let(:holiday_in_the_past) {user.absences.create!(date_from: last_monday, date_to: last_monday, description: "Test description",
+    let!(:holiday_in_the_past) {user.absences.create(date_from: last_monday, date_to: last_monday, description: "Test description",
                                                       holiday_status_id: 2, absence_type_id: 1)}
 
     subject { active_absence }

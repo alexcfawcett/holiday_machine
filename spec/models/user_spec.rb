@@ -38,7 +38,7 @@ describe User do
 
       end
 
-      let(:user_absence) {Absence.create(date_from: "20/10/2014", date_to: "24/10/2014",
+      let!(:user_absence) {Absence.create(date_from: "20/10/2014", date_to: "24/10/2014",
                                           description: "Test Holiday description",
                                           holiday_status_id: 1, absence_type_id: 1, user_id: subject.id)}
 
