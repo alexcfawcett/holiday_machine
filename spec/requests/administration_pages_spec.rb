@@ -4,11 +4,11 @@ describe "Administration pages" do
 
   subject { page }
   
-  let!(:manager){ FactoryGirl.create(:manager) }
+  let(:manager){ FactoryGirl.create(:manager) }
 
-  let!(:user) { FactoryGirl.create(:user, manager_id: manager.id) }
+  let(:user) { FactoryGirl.create(:user, manager_id: manager.id) }
 
-  let!(:absence) {Absence.create!(date_from: "23/07/2014", date_to: "28/07/2014",
+  let(:absence) {Absence.create!(date_from: "23/07/2014", date_to: "28/07/2014",
                                   description: "Test description", holiday_status_id: 1, absence_type_id: 1,
                                   user_id: user.id)}
 
