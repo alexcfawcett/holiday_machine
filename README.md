@@ -76,7 +76,6 @@ Todo
 * Configure devise to intelligently handle SMTP send rejection (if possible)
 * Replace the secret_token (config/initializers/secret_token.rb) with env var for production
 * Revisit the calendar drop down options and clarify
-* Revisit the "Reports" table, this page could become very long and unusable
 * On registration, calculate number of holiday days remaining based on current date
 * On invitation, allow manager to set the number of holiday days remaining
 * Revisit “Active Team Holidays” list, is this working correctly for both user types?
