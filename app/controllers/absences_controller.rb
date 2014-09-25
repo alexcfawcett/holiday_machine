@@ -57,14 +57,16 @@ class AbsencesController < ApplicationController
 
     holiday_status_id = params[:absence][:holiday_status_id].to_i
     @absence = Absence.find_by_id(params[:id])
-    if holiday_status_id == 3
-      @absence.destroy
-    else
-      @absence.holiday_status_id = holiday_status_id
-      @absence.save
-    end
+
+    @absence.holiday_status_id = holiday_status_id
+    @absence.save
 
     send_email_to_user
+
+    # If the holiday request is rejected, destroy the request (important in order to replenish the days)
+    if holiday_status_id == 3
+      @absence.destroy
+    end
 
     respond_to do |format|
       flash[:notice] = "Status has been changed"

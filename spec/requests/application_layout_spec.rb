@@ -10,8 +10,6 @@ describe "Application Layout" do
   shared_examples_for "all authentication states" do
     it { expect(subject).to have_link('Holiday Thyme', href: root_path) }
     it { expect(subject).to have_link('GitHub') }
-    it { expect(subject).to have_link('Help') }
-    it { expect(subject).to have_link('Contact') }
   end
   
   shared_examples_for "authenticated as user" do
