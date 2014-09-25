@@ -68,8 +68,7 @@ bundle exec rspec
 
 Todo 
 -------------
-* Fix "View" links on "Manage Absences" page
-* Add help and contact pages
+* Fix "View" links on "Manage Absences" page (this looks it is fixed already - ES to confirm + delete).
 * Test and lock down routes as needed (users should not be able to access manager-only areas)
 * Replace the SMTP details in config with environment variables, and the change password (Change password functionality is now in - ES can this section be removed?)
 * Replace Gmail SMTP with something else (hourly and daily send limits cause exceptions), OR:
