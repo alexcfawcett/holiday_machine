@@ -1,3 +1,5 @@
+require_relative '../../config/initializers/holiday_status_constants'
+require_relative '../../config/initializers/absence_type_constants'
 class AbsencesController < ApplicationController
 
   before_filter :authenticate_user!
@@ -35,7 +37,7 @@ class AbsencesController < ApplicationController
   def create
     @absence = Absence.new(params[:absence])
     @absence.user = current_user
-    @absence.holiday_status_id = 1
+    @absence.holiday_status_id = HolidayStatusConstants::HOLIDAY_STATUS_PENDING
 
     if @absence.save
       manager_id = current_user.manager_id
@@ -64,7 +66,7 @@ class AbsencesController < ApplicationController
     send_email_to_user
 
     # If the holiday request is rejected, destroy the request (important in order to replenish the days)
-    if holiday_status_id == 3
+    if holiday_status_id == HolidayStatusConstants::HOLIDAY_STATUS_REJECTED
       @absence.destroy
     end
 
@@ -94,8 +96,10 @@ class AbsencesController < ApplicationController
         @row_id = params[:id]
         @failed = false
         
-        @other_absence_count = current_user.absences.where('absence_type_id !=1').count
-        @holiday_count = current_user.absences.where('absence_type_id =1').count
+        @other_absence_count = current_user.absences.where('absence_type_id !=?',
+        AbsenceTypeConstants::ABSENCE_TYPE_HOLIDAY).count
+        @holiday_count = current_user.absences.where('absence_type_id =?',
+        AbsenceTypeConstants::ABSENCE_TYPE_HOLIDAY).count
         
         flash.now[:success] = "Absence deleted"
         format.js

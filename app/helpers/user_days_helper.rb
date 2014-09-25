@@ -1,3 +1,4 @@
+require_relative '../../config/initializers/absence_type_constants'
 module UserDaysHelper
 
   def calendar_year(holiday_year)
@@ -11,7 +12,8 @@ module UserDaysHelper
   end
 
   def overall_days_for_year user, selected_year
-    absences = Absence.where("holiday_year_id = ? AND user_id = ? and absence_type_id =1", selected_year.id, user.id)
+    absences = Absence.where("holiday_year_id = ? AND user_id = ? and absence_type_id = ?", selected_year.id, user.id,
+    AbsenceTypeConstants::ABSENCE_TYPE_HOLIDAY)
     hols_used = absences.blank? ? 0 : absences.sum(:working_days_used)
     days_remaining = days_remaining user, selected_year
     hols_used + days_remaining

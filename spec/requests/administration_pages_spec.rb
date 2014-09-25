@@ -8,9 +8,12 @@ describe "Administration pages" do
 
   let(:user) { FactoryGirl.create(:user, manager_id: manager.id) }
 
-  let!(:absence) {Absence.create(date_from: "23/07/2014", date_to: "28/07/2014",
-                                  description: "Test description", holiday_status_id: 1, absence_type_id: 1,
-                                  user_id: user.id)}
+  let!(:absence) {Absence.create(date_from: "23/07/2014",
+                                 date_to: "28/07/2014",
+                                 description: "Test description",
+                                 holiday_status_id: HolidayStatusConstants::HOLIDAY_STATUS_PENDING,
+                                 absence_type_id: AbsenceTypeConstants::ABSENCE_TYPE_HOLIDAY,
+                                 user_id: user.id)}
 
   before do
     sign_in manager

@@ -33,18 +33,13 @@ describe User do
 
     describe "absence associations" do
 
-      before do
-        #puts "SUBJECT ID: #{subject.id}"
-
-      end
-
       let!(:user_absence) {Absence.create(date_from: "20/10/2014", date_to: "24/10/2014",
                                           description: "Test Holiday description",
-                                          holiday_status_id: 1, absence_type_id: 1, user_id: subject.id)}
+                                          holiday_status_id: HolidayStatusConstants::HOLIDAY_STATUS_PENDING,
+                                          absence_type_id: AbsenceTypeConstants::ABSENCE_TYPE_HOLIDAY,
+                                          user_id: subject.id)}
 
       its(:absences) { should include(user_absence) }
-
-      #its(:holidays) { should_not include(another_user_holiday) }
 
       it 'should destroy holiday associations' do
         @absences = subject.absences.to_a

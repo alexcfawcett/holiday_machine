@@ -56,8 +56,11 @@ describe "Absence pages" do
     end
 
     context 'changed year' do
-      let!(:absence) {Absence.create(date_from: "23/07/2015", date_to: "23/07/2015",
-                                    description: "Test description", holiday_status_id: 1, absence_type_id: 1,
+      let!(:absence) {Absence.create(date_from: "23/07/2015",
+                                     date_to: "23/07/2015",
+                                    description: "Test description",
+                                    holiday_status_id: HolidayStatusConstants::HOLIDAY_STATUS_PENDING,
+                                    absence_type_id: AbsenceTypeConstants::ABSENCE_TYPE_HOLIDAY,
                                     user_id: user.id)}
 
       # Requires Firefox

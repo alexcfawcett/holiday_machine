@@ -11,8 +11,12 @@ describe Absence do
   context 'on creation' do
     context 'if user does not exist' do
       before do
-        @absence = Absence.new(date_from: "20/10/2014", date_to: "24/10/2014", description: "Test Holiday description",
-                               holiday_status_id: 1, absence_type_id: 1, user_id: 999)
+        @absence = Absence.new(date_from: "20/10/2014",
+                               date_to: "24/10/2014",
+                               description: "Test Holiday description",
+                               holiday_status_id: HolidayStatusConstants::HOLIDAY_STATUS_PENDING,
+                               absence_type_id: AbsenceTypeConstants::ABSENCE_TYPE_HOLIDAY,
+                               user_id: 999)
       end
 
       it "should not be valid" do
@@ -22,11 +26,18 @@ describe Absence do
 
     context 'if a user already has a holiday booked between dates' do
       before do
-        Absence.create(date_from: "20/10/2014", date_to: "24/10/2014",
-                                 description: "Test Holiday description",
-                               holiday_status_id: 1, absence_type_id: 1, user_id: user.id)
-        @absence = Absence.new(date_from: "22/10/2014", date_to: "24/10/2014", description: "Test Holiday description",
-                               holiday_status_id: 1, absence_type_id: 1, user_id: user.id)
+        Absence.create(date_from: "20/10/2014",
+                       date_to: "24/10/2014",
+                       description: "Test Holiday description",
+                       holiday_status_id: HolidayStatusConstants::HOLIDAY_STATUS_PENDING,
+                       absence_type_id: AbsenceTypeConstants::ABSENCE_TYPE_HOLIDAY,
+                       user_id: user.id)
+        @absence = Absence.new(date_from: "22/10/2014",
+                               date_to: "24/10/2014",
+                               description: "Test Holiday description",
+                               holiday_status_id: HolidayStatusConstants::HOLIDAY_STATUS_PENDING,
+                               absence_type_id: AbsenceTypeConstants::ABSENCE_TYPE_HOLIDAY,
+                               user_id: user.id)
       end
 
       it "should not be valid" do
@@ -36,8 +47,12 @@ describe Absence do
 
     context 'if a user provides invalid dates' do
       before do
-        @absence = Absence.new(date_from: "", date_to: "24/10/2014", description: "Test Holiday description",
-                                  holiday_status_id: 1, absence_type_id: 1, user_id: user.id)
+        @absence = Absence.new(date_from: "",
+                               date_to: "24/10/2014",
+                               description: "Test Holiday description",
+                               holiday_status_id: HolidayStatusConstants::HOLIDAY_STATUS_PENDING,
+                               absence_type_id: AbsenceTypeConstants::ABSENCE_TYPE_HOLIDAY,
+                               user_id: user.id)
       end
 
       it "should not be valid" do
@@ -52,20 +67,29 @@ describe Absence do
     let(:today) {Time.zone.now.strftime("%d/%m/%Y")}
     let(:next_monday) {Date.commercial(Date.today.year, 1+Date.today.cweek, 1).in_time_zone.strftime("%d/%m/%Y")}
     let(:last_monday) {Date.commercial(Date.today.year, 1-Date.today.cweek, 1).in_time_zone.strftime("%d/%m/%Y")}
-    let!(:inactive_absence) {user.absences.create(date_from: next_monday, date_to: next_monday,
-                                             description: "Test description", holiday_status_id: 1, absence_type_id: 1)}
-    let!(:active_absence) {user.absences.create(date_from: today, date_to: today, description: "Test description",
-                                           holiday_status_id: 1, absence_type_id: 1)}
+    let!(:inactive_absence) {user.absences.create(date_from: next_monday,
+                                                  date_to: next_monday,
+                                                  description: "Test description",
+                                                  holiday_status_id: HolidayStatusConstants::HOLIDAY_STATUS_PENDING,
+                                                  absence_type_id: AbsenceTypeConstants::ABSENCE_TYPE_HOLIDAY)}
+    let!(:active_absence) {user.absences.create(date_from: today,
+                                                date_to: today,
+                                                description: "Test description",
+                                                holiday_status_id: HolidayStatusConstants::HOLIDAY_STATUS_PENDING,
+                                                absence_type_id: AbsenceTypeConstants::ABSENCE_TYPE_HOLIDAY)}
 
-    let!(:holiday_in_the_past) {user.absences.create(date_from: last_monday, date_to: last_monday, description: "Test description",
-                                                      holiday_status_id: 2, absence_type_id: 1)}
+    let!(:holiday_in_the_past) {user.absences.create(date_from: last_monday,
+                                                     date_to: last_monday,
+                                                     description: "Test description",
+                                                     holiday_status_id: HolidayStatusConstants::HOLIDAY_STATUS_APPROVED,
+                                                     absence_type_id: AbsenceTypeConstants::ABSENCE_TYPE_HOLIDAY)}
 
     subject { active_absence }
 
     it { expect(subject).to be_valid }
     its(:description) { should eq("Test description") }
-    its(:holiday_status_id) { should eq(1) }
-    its(:absence_type_id) { should eq(1) }
+    its(:holiday_status_id) { should eq(HolidayStatusConstants::HOLIDAY_STATUS_PENDING) }
+    its(:absence_type_id) { should eq(AbsenceTypeConstants::ABSENCE_TYPE_HOLIDAY) }
     its(:user_id) { should eq(user.id) }
 
     describe '.active_team_holidays' do
