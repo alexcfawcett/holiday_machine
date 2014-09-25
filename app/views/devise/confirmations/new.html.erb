@@ -1,15 +1,18 @@
 <fieldset class="login">
   <h1>Resend confirmation instructions</h1>
 
-  <%= form_for(resource, as: resource_name, url: confirmation_path(resource_name), html: { method: :post} ) do |f| %>
+  <div class="span6 offset3">
+    <%= form_for(resource, as: resource_name, url: confirmation_path(resource_name), html: { method: :post} ) do |f| %>
 
-      <%= render 'shared/error_messages', object: f.object %>
+        <%= render 'shared/error_messages', object: f.object %>
 
-      <%= f.label :email %>
-      <%= f.text_field :email %>
+        <%= f.label :email %>
+        <%= f.text_field :email %>
 
-      <%= f.submit 'Resend confirmation instructions', class: 'btn btn-large btn-primary' %>
-  <% end %>
+        <%= f.submit 'Resend confirmation instructions', class: 'btn btn-large btn-primary' %>
+    <% end %>
 
-  <%= render partial: 'devise/shared/links' %>
+    <%= render partial: 'devise/shared/links' %>
+  </div>
+
 </fieldset>

@@ -1,12 +1,19 @@
-<h1>Resend unlock instructions</h1>
+<fieldset class="login">
+  <h1>Resend unlock instructions</h1>
 
-<%= form_for(resource, as: resource_name, url: unlock_path(resource_name), html: { method: :post } ) do |f| %>
-  <%= render 'shared/error_messages', object: f.object %>
+  <div class="span6 offset3">
+    <%= form_for(resource, as: resource_name, url: unlock_path(resource_name), html: { method: :post } ) do |f| %>
+        <%= render 'shared/error_messages', object: f.object %>
 
-  <%= f.label :email %>
-  <%= f.text_field :email %>
+        <%= f.label :email %>
+        <%= f.text_field :email %>
 
-  <%= f.submit 'Resend unlock instructions', class: 'btn btn-large btn-primary' %>
-<% end %>
+        <%= f.submit 'Resend unlock instructions', class: 'btn btn-large btn-primary' %>
+    <% end %>
 
-<%= render partial: 'devise/shared/links' %>
+    <%= render partial: 'devise/shared/links' %>
+  </div>
+</fieldset>
+
+
+
