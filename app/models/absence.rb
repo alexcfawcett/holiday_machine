@@ -114,7 +114,8 @@ class Absence < ActiveRecord::Base
   end
 
   def check_if_holiday_has_passed
-    if holiday_status_id == HolidayStatusConstants::HOLIDAY_STATUS_APPROVED
+    if holiday_status_id == HolidayStatusConstants::HOLIDAY_STATUS_APPROVED ||
+        holiday_status_id == HolidayStatusConstants::HOLIDAY_STATUS_TAKEN
       if date_to < Date.today
         errors.add(:base, "Holiday has passed")
         false
@@ -135,13 +136,20 @@ class Absence < ActiveRecord::Base
       end
 
       if hol.user == current_user
-        hol_hash = { id: hol.id, title: [hol.user.forename, hol.description].join(": ") + " " + half_day, start: hol.date_from.iso8601,
-                     end: hol.date_to.iso8601, color: HOL_COLOURS[hol.holiday_status_id - 1], textColor: '#404040',
-                     borderColor: BORDER_COLOURS[hol.holiday_status_id - 1], type: 'holiday'}
-      else
-        hol_hash = { id: hol.id, title: hol.user.full_name + " " + half_day, start: hol.date_from.iso8601,
+        hol_hash = { id: hol.id, title: [hol.user.forename, hol.description].join(": ") + " " + half_day,
+                     start: hol.date_from.iso8601,
                      end: hol.date_to.iso8601, color: HOL_COLOURS[hol.holiday_status_id - 1],
-                     textColor: '#404040', borderColor: BORDER_COLOURS[hol.holiday_status_id - 1]}
+                     textColor: '#404040',
+                     borderColor: BORDER_COLOURS[hol.holiday_status_id - 1],
+                     type: 'holiday'}
+      else
+        hol_hash = { id: hol.id,
+                     title: hol.user.full_name + " " + half_day,
+                     start: hol.date_from.iso8601,
+                     end: hol.date_to.iso8601,
+                     color: HOL_COLOURS[hol.holiday_status_id - 1],
+                     textColor: '#404040',
+                     borderColor: BORDER_COLOURS[hol.holiday_status_id - 1]}
       end
       json << hol_hash
     end

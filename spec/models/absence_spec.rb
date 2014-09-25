@@ -84,6 +84,12 @@ describe Absence do
                                                      holiday_status_id: HolidayStatusConstants::HOLIDAY_STATUS_APPROVED,
                                                      absence_type_id: AbsenceTypeConstants::ABSENCE_TYPE_HOLIDAY)}
 
+    let!(:taken_holiday) { user.absences.create(date_from: last_monday,
+      date_to: last_monday,
+      description: 'Taken absence',
+      holiday_status_id: HolidayStatusConstants::HOLIDAY_STATUS_TAKEN,
+      absence_type_id: AbsenceTypeConstants::ABSENCE_TYPE_HOLIDAY)}
+
     subject { active_absence }
 
     it { expect(subject).to be_valid }
@@ -130,6 +136,12 @@ describe Absence do
     describe 'should not allow an approved absence in the past to be destroyed' do
       it 'should not change the Absence count in the database' do
         expect { holiday_in_the_past.destroy }.to_not change(Absence, :count)
+      end
+    end
+
+    describe 'should not allow a previously taken holiday to be destroyed' do
+      it 'should not change the Absence count in the DB' do
+        expect { taken_holiday.destroy }.to_not change(Absence, :count)
       end
     end
   end
