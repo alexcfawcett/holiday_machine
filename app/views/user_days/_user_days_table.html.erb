@@ -11,18 +11,18 @@
     <% @team_users.each do |user| %>
       <%= content_tag_for :tr, user do %>
         <%= content_tag :td do %>
-          <%= link_to user.full_name, '#', :class => 'user-days-dialog', 'data-dialog' => "extra_user_#{user.id}" %>
+          <%= link_to user.full_name, '#', class: 'user-days-dialog', 'data-dialog' => "extra_user_#{user.id}" %>
         <% end %>
         <%= content_tag :td, overall_days_for_year(user, @selected_year) %>
-        <%= content_tag :td, days_remaining(user, @selected_year), :class => 'working-days-left' %>
+        <%= content_tag :td, days_remaining(user, @selected_year), class: 'working-days-left' %>
         <%= content_tag :td do %>
           <%# TODO: Namespace each form as this won't be valid html due to duplicate id's %>
-          <%= simple_form_for(UserDay.new, :remote=> true) do |f| %>
-           <%= f.input :holiday_year_id, :as => :hidden, :input_html => { :class => "holiday_year", :value => @selected_year.id } %>
-              <%= f.input :user_id, :as => :hidden, :input_html => {:value => user.id} %>
-              <%= f.input :reason, :label => false, :placeholder => 'e.g. Carried over from last year' %>
-              <%= f.input :no_days, :as => :string, :input_html => {:class => 'update-working-days', :value => 0}, :label => false %>
-              <%= f.button :submit, 'Update allowance', :class => 'btn primary', :data => {:confirm => "Are you sure you want to update #{user.forename}'s holiday allowance?"} %>
+          <%= simple_form_for(UserDay.new, remote: true) do |f| %>
+           <%= f.input :holiday_year_id, as: :hidden, input_html: { class: "holiday_year", value: @selected_year.id } %>
+              <%= f.input :user_id, as: :hidden, input_html: {value: user.id} %>
+              <%= f.input :reason, label: false, placeholder: 'e.g. Carried over from last year' %>
+              <%= f.input :no_days, as: :string, input_html: { class: 'update-working-days', value: 0}, label: false %>
+              <%= f.button :submit, 'Update allowance', class: 'btn primary', data: { confirm: "Are you sure you want to update #{user.forename}'s holiday allowance?"} %>
             <% end %>
           <% end %>
         <% end %>

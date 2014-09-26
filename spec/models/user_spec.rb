@@ -3,18 +3,13 @@ require "spec_helper"
 describe User do
 
   before do
-    @user = User.new forename: "Bob", surname: "Builder", invite_code: "Sage1nvite00", email: "test@bar.com",
+    @user = User.create forename: "Bob", surname: "Builder", invite_code: "Sage1nvite00", email: "test@bar.com",
                          user_type_id: 1, password: "Passw0rd@", password_confirmation: "Passw0rd@"
-    @user.save!
   end
 
   subject { @user }
 
   context 'after creation' do
-    before do
-
-    end
-
     it "gives the correct fullname" do
       expect(subject.full_name).to eq(@user.forename + " " + @user.surname)
     end

@@ -1,7 +1,7 @@
 class UserDaysController < ApplicationController
 
   before_filter :authenticate_user!
-  #TODO restrict to managers only
+  before_filter :authenticate_manager
 
   # GET /user_days
   def index

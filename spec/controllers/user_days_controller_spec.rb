@@ -9,6 +9,7 @@ describe UserDaysController do
 
   before :each do
     subject.stub :authenticate_user!
+    subject.stub :authenticate_manager
   end
 
   def mock_user_day(stubs={})
