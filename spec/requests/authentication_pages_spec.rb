@@ -13,9 +13,9 @@ describe "Authentication" do
   describe "signin page" do
     before { visit sign_in_path }
 
-    it { should have_content('Sign In') }
-    it { should have_title('Sign In') }
-    it { should have_link('Sign up now!',    href: register_path) }
+    it { expect(subject).to have_content('Sign In') }
+    it { expect(subject).to have_title('Sign In') }
+    it { expect(subject).to have_link('Sign up now!',    href: register_path) }
   end
 
   describe "signin" do
@@ -27,12 +27,12 @@ describe "Authentication" do
     describe "with invalid information" do
       before { click_button signin }
 
-      it { should have_title('Sign In') }
-      it { should have_selector('div.alert.alert-alert') }
+      it { expect(subject).to have_title('Sign In') }
+      it { expect(subject).to have_selector('div.alert.alert-alert') }
 
       describe "after visiting another page" do
         before { visit root_path }
-        it { should_not have_selector('div.alert.alert-error') }
+        it { expect(subject).to_not have_selector('div.alert.alert-error') }
       end
     end
 
@@ -44,13 +44,13 @@ describe "Authentication" do
       end
 
       describe "after signing in" do
-        it { should have_link('Account',     href: '#') }
-        it { should have_link('Sign Out',    href: sign_out_path) }
-        it { should_not have_link('Sign In', href: sign_in_path) }
+        it { expect(subject).to have_link('Account',     href: '#') }
+        it { expect(subject).to have_link('Sign Out',    href: sign_out_path) }
+        it { expect(subject).to_not have_link('Sign In', href: sign_in_path) }
 
         describe "followed by signout" do
           before { click_link "Sign Out" }
-          it { should have_link('Sign In') }
+          it { expect(subject).to have_link('Sign In') }
         end
       end
     end

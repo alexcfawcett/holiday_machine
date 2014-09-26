@@ -4,14 +4,14 @@
   
     <% if @users.empty? %>
       <p>
-        No absences found.
+        No pending absence requests found.
       </p>
     <% end %>
   
     <% @users.each do |user| %>
       <% unless user.absences.empty? %>
         <div class="gravatar-wrapper">
-          <%= image_tag(gravatar(user, { :size => 35 }), :class => 'gravatar') %>
+          <%= image_tag(gravatar(user, { size: 35 }), class: 'gravatar') %>
           <%= content_tag :h3, user.full_name %>
         </div>
         <table>
@@ -37,9 +37,12 @@
                 <%= content_tag :td, holiday_status(absence) %>
                 <td>
                   <%= link_to 'View', "/calendar/show?year=#{absence.date_from.year}&month=#{absence.date_from.month - 1}" %>
-                  <%= link_to 'Approve', absence_path(absence, :absence => { :holiday_status_id => 2 }), :method => :put, :remote => true %>
-                  <%= link_to 'Reject', absence_path(absence, :absence => { :holiday_status_id => 3 }), :method => :put, :remote => true %>
-                  <%= link_to 'Pending', absence_path(absence, :absence => { :holiday_status_id => 1 }), :method => :put, :remote => true %>
+                  <%= link_to 'Approve', absence_path(absence, absence: { holiday_status_id: HolidayStatusConstants::HOLIDAY_STATUS_APPROVED }),
+                              method: :put, remote: true %>
+                  <%= link_to 'Reject', absence_path(absence, absence: { holiday_status_id: HolidayStatusConstants::HOLIDAY_STATUS_REJECTED }),
+                              method: :put, remote: true %>
+                  <%= link_to 'Pending', absence_path(absence, absence: { holiday_status_id: HolidayStatusConstants::HOLIDAY_STATUS_PENDING }),
+                              method: :put, remote: true %>
                 </td>
               <% end %>
             <% end %>

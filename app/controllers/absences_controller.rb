@@ -1,3 +1,5 @@
+require_relative '../../config/initializers/holiday_status_constants'
+require_relative '../../config/initializers/absence_type_constants'
 class AbsencesController < ApplicationController
 
   before_filter :authenticate_user!
@@ -35,7 +37,7 @@ class AbsencesController < ApplicationController
   def create
     @absence = Absence.new(params[:absence])
     @absence.user = current_user
-    @absence.holiday_status_id = 1
+    @absence.holiday_status_id = HolidayStatusConstants::HOLIDAY_STATUS_PENDING
 
     if @absence.save
       manager_id = current_user.manager_id
@@ -54,15 +56,18 @@ class AbsencesController < ApplicationController
 
   def update
     #TODO temp - to bypass the validation around half-days
-    ActiveRecord::Base.connection.execute("update absences set holiday_status_id = #{params[:absence][:holiday_status_id]} where id = #{params[:id]}")
 
+    holiday_status_id = params[:absence][:holiday_status_id].to_i
     @absence = Absence.find_by_id(params[:id])
-    vacation_user = @absence.user
 
-    if vacation_user.manager_id
-      manager = User.find_by_id(vacation_user.manager_id)
-      #TODO prevent holiday status being switched to pending
-      HolidayMailer.holiday_actioned(manager, @absence).deliver
+    @absence.holiday_status_id = holiday_status_id
+    @absence.save
+
+    send_email_to_user
+
+    # If the holiday request is rejected, destroy the request (important in order to replenish the days)
+    if holiday_status_id == HolidayStatusConstants::HOLIDAY_STATUS_REJECTED
+      @absence.destroy
     end
 
     respond_to do |format|
@@ -71,6 +76,8 @@ class AbsencesController < ApplicationController
     end
 
   end
+
+
 
 
   # DELETE /absences/1
@@ -89,8 +96,10 @@ class AbsencesController < ApplicationController
         @row_id = params[:id]
         @failed = false
         
-        @other_absence_count = current_user.absences.where('absence_type_id !=1').count
-        @holiday_count = current_user.absences.where('absence_type_id =1').count
+        @other_absence_count = current_user.absences.where('absence_type_id !=?',
+        AbsenceTypeConstants::ABSENCE_TYPE_HOLIDAY).count
+        @holiday_count = current_user.absences.where('absence_type_id =?',
+        AbsenceTypeConstants::ABSENCE_TYPE_HOLIDAY).count
         
         flash.now[:success] = "Absence deleted"
         format.js
@@ -119,5 +128,14 @@ class AbsencesController < ApplicationController
     @active_team_holidays = Absence.active_team_holidays(current_user.manager_id)
     @upcoming_team_holidays = Absence.upcoming_team_holidays(current_user)
 
+  end
+
+  def send_email_to_user
+    vacation_user = @absence.user
+    if vacation_user.manager_id
+      manager = User.find_by_id(vacation_user.manager_id)
+      #TODO prevent holiday status being switched to pending
+      HolidayMailer.holiday_actioned(manager, @absence).deliver
+    end
   end
 end

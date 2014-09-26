@@ -1,3 +1,5 @@
+require_relative '../../config/initializers/holiday_status_constants'
+require_relative '../../config/initializers/absence_type_constants'
 class Absence < ActiveRecord::Base
 
   attr_accessible :date_from, :date_to, :description, :holiday_status_id, :user_id, :absence_type_id
@@ -15,11 +17,11 @@ class Absence < ActiveRecord::Base
   # Validation
  validates :date_from, :date_to, :description, :holiday_status_id, :user_id, :absence_type_id, presence: true
  validate :holiday_must_not_straddle_holiday_years
- validate :half_days_not_on_working_days, :on => :create
- validate :dont_exceed_days_remaining, :on => :create
+ validate :half_days_not_on_working_days, on: :create
+ validate :dont_exceed_days_remaining, on: :create
  validate :date_from_must_be_before_date_to
  validate :working_days_greater_than_zero
- validate :no_overlapping_holidays, :on => :create
+ validate :no_overlapping_holidays, on: :create
 
   # Callbacks
   # TODO re-implement these
@@ -30,8 +32,8 @@ class Absence < ActiveRecord::Base
   after_destroy :add_days_remaining
 
   # Scopes
-  scope :user_holidays, lambda { |user_id| where(:user_id => user_id).order('date_from ASC') }
-  scope :per_holiday_year, lambda { |holiday_year_id| where(:holiday_year_id => holiday_year_id) }
+  scope :user_holidays, lambda { |user_id| where(user_id: user_id).order('date_from ASC') }
+  scope :per_holiday_year, lambda { |holiday_year_id| where(holiday_year_id: holiday_year_id) }
 
   scope :active, lambda { where("? BETWEEN date_from AND date_to",Absence.time_string)}
   scope :in_between, lambda { |from_date, to_date|  where "date_from >= ? and date_to <= ?", from_date, to_date}
@@ -92,7 +94,7 @@ class Absence < ActiveRecord::Base
       when 'ALL'
         return User.all
       when 'ME'
-        User.where(:id => current_user.id)
+        User.where(id: current_user.id)
       else
         # Doesn't work for managers (they see the team upwards)
         return User.get_team_users(current_user.manager_id)        
@@ -112,7 +114,8 @@ class Absence < ActiveRecord::Base
   end
 
   def check_if_holiday_has_passed
-    unless holiday_status_id == 1
+    if holiday_status_id == HolidayStatusConstants::HOLIDAY_STATUS_APPROVED ||
+        holiday_status_id == HolidayStatusConstants::HOLIDAY_STATUS_TAKEN
       if date_to < Date.today
         errors.add(:base, "Holiday has passed")
         false
@@ -133,15 +136,26 @@ class Absence < ActiveRecord::Base
       end
 
       if hol.user == current_user
-        hol_hash = {:id => hol.id, :title => [hol.user.forename, hol.description].join(": ") + " " + half_day, :start => hol.date_from.iso8601, :end => hol.date_to.iso8601, :color => HOL_COLOURS[hol.holiday_status_id - 1], :textColor => '#404040', :borderColor => BORDER_COLOURS[hol.holiday_status_id - 1], :type => 'holiday'}
+        hol_hash = { id: hol.id, title: [hol.user.forename, hol.description].join(": ") + " " + half_day,
+                     start: hol.date_from.iso8601,
+                     end: hol.date_to.iso8601, color: HOL_COLOURS[hol.holiday_status_id - 1],
+                     textColor: '#404040',
+                     borderColor: BORDER_COLOURS[hol.holiday_status_id - 1],
+                     type: 'holiday'}
       else
-        hol_hash = {:id => hol.id, :title=> hol.user.full_name + " " + half_day, :start => hol.date_from.iso8601, :end => hol.date_to.iso8601, :color => HOL_COLOURS[hol.holiday_status_id - 1], :textColor => '#404040', :borderColor => BORDER_COLOURS[hol.holiday_status_id - 1]}
+        hol_hash = { id: hol.id,
+                     title: hol.user.full_name + " " + half_day,
+                     start: hol.date_from.iso8601,
+                     end: hol.date_to.iso8601,
+                     color: HOL_COLOURS[hol.holiday_status_id - 1],
+                     textColor: '#404040',
+                     borderColor: BORDER_COLOURS[hol.holiday_status_id - 1]}
       end
       json << hol_hash
     end
 
     bank_holidays.each do |hol|
-      hol_hash = {:id => hol.id, :title => hol.name, :start => hol.date_of_hol.to_s, :color =>"black", :type => 'bank-holiday'}
+      hol_hash = { id: hol.id, title: hol.name, start: hol.date_of_hol.to_s, color: "black", type: 'bank-holiday'}
       json << hol_hash
     end
     json
@@ -160,8 +174,6 @@ class Absence < ActiveRecord::Base
   end
 
   def holiday_must_not_straddle_holiday_years
-    #puts ' ONE OR MORE DATES WHERE NIL' if date_to.nil? || date_from.nil?
-
     number_years = HolidayYear.holiday_years_containing_holiday(date_from, date_to).count
     errors.add(:base, "Holiday must not cross years") if number_years> 1
   end
@@ -216,14 +228,14 @@ class Absence < ActiveRecord::Base
   end
 
   def decrease_days_remaining
-    return unless self.absence_type_id == 1 #Only holidays affect the days remaining
+    return unless self.absence_type_id == AbsenceTypeConstants::ABSENCE_TYPE_HOLIDAY
     holiday_allowance = self.user.get_holiday_allowance_for_dates self.date_from, self.date_to
     holiday_allowance.days_remaining -= business_days_between
     holiday_allowance.save
   end
 
   def add_days_remaining
-    return unless self.absence_type_id == 1 #Only holidays affect the days remaining
+    return unless self.absence_type_id == AbsenceTypeConstants::ABSENCE_TYPE_HOLIDAY
     holiday_allowance = self.user.get_holiday_allowance_for_dates self.date_from, self.date_to
     holiday_allowance.days_remaining += business_days_between
     holiday_allowance.save
@@ -235,7 +247,7 @@ class Absence < ActiveRecord::Base
       return
     end
 
-    return unless self.absence_type_id == 1 #Only holidays affect the days remaining
+    return unless self.absence_type_id == AbsenceTypeConstants::ABSENCE_TYPE_HOLIDAY
     holiday_allowance = self.user.get_holiday_allowance_for_dates self.date_from, self.date_to
     if holiday_allowance == 0 or holiday_allowance.nil? then
       return

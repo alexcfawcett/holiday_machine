@@ -1,3 +1,4 @@
+require_relative '../../config/initializers/user_type_constants'
 class User < ActiveRecord::Base
 
   devise :invitable, :database_authenticatable, :confirmable, :lockable, :recoverable,
@@ -10,8 +11,8 @@ class User < ActiveRecord::Base
   #after_destroy :delete_all_allowances
 
   ## Associations
-  belongs_to :manager, :class_name => 'User', :foreign_key => 'manager_id'
-  has_many :employees, :class_name => 'User', :foreign_key => "manager_id" do
+  belongs_to :manager, class_name: 'User', foreign_key: 'manager_id'
+  has_many :employees, class_name: 'User', foreign_key: "manager_id" do
     def active_only
       where('confirmed_at NOT NULL')
     end
@@ -23,12 +24,12 @@ class User < ActiveRecord::Base
   has_many :user_days_for_years, dependent: :destroy
 
   ## Validations
-  validates_presence_of :email, :forename, :surname, :user_type
-  validates_presence_of :invite_code, :on => :create
-  validates_each :invite_code, :on => :create do |record, attr, value|
+  validates_presence_of :forename, :surname, :user_type
+  validates_presence_of :invite_code, on: :create
+  validates_each :invite_code, on: :create do |record, attr, value|
     record.errors.add attr, "incorrect invite code" unless value && value == "Sage1nvite00"
   end
-  validate :validate_not_own_manager
+  validate :validate_not_own_manager, :validate_password_strength
 
   attr_accessor :invite_code
   attr_accessible :email, :password, :password_confirmation, :forename, :surname, :user_type_id, :manager_id, :invite_code, :invitation_token, :remember_me
@@ -41,7 +42,7 @@ class User < ActiveRecord::Base
         manager_id
     )}
   #Active managers only
-  scope :active_managers, ->{where('confirmed_at NOT NULL AND user_type_id = 2')}
+  scope :active_managers, ->{where('confirmed_at NOT NULL AND user_type_id = ?', UserTypeConstants::USER_TYPE_MANAGER)}
 
   ## Instance methods
   def full_name
@@ -74,7 +75,6 @@ class User < ActiveRecord::Base
   end
 
   def create_allowance
-    today = Date.today
     base_holiday_allowance = 25
 
     holiday_years = HolidayYear.all
@@ -114,7 +114,7 @@ class User < ActiveRecord::Base
   end
 
   def is_manager?
-    return true if user_type_id == 2
+    return true if user_type_id == UserTypeConstants::USER_TYPE_MANAGER
   end
 
   private
@@ -130,5 +130,12 @@ end
 def validate_not_own_manager
   if manager_id != nil && id == manager_id
     errors.add(:manager_id, 'cannot be self')
+  end
+end
+
+def validate_password_strength
+  if password.present? and not password.match(/^.*(?=.{8,})(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=]).*$/)
+    errors.add(:password, 'must be at least 8 characters long, contain at least one lower case letter, one upper case letter,
+    one digit and one special character. Valid special characters are: @, #, $, %, ^, &, +, = ')
   end
 end

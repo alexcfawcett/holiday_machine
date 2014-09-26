@@ -6,11 +6,5 @@ describe HolidayStatus do
 
   subject { @status }
 
-  it { should be_valid }
-
-  context 'after creation' do
-    before do
-      subject.save!
-    end
-  end
+  it { expect(subject).to be_valid }
 end

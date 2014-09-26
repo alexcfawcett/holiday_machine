@@ -2,18 +2,18 @@
 <h1>Sign Up</h1>
 <div class="row">
   <div class="span6 offset3">
-    <%= simple_form_for(resource, :as => resource_name, :url => invitation_path(resource_name)) do |f| %>
+    <%= simple_form_for(resource, as: resource_name, url: invitation_path(resource_name)) do |f| %>
         <%= render 'shared/error_messages', object: f.object %>
         <%= f.hidden_field :invitation_token %>
         <%= f.input :email, required: false, disabled: true %>
-        <%= f.input :password, :required => true, :error => false %>
-        <%= f.input :password_confirmation, :required => true, :error => false %>
-        <%= f.input :forename, :error => false %>
-        <%= f.input :surname, :error => false %>
+        <%= f.input :password, required: true, error: false %>
+        <%= f.input :password_confirmation, required: true, error: false %>
+        <%= f.input :forename, error: false %>
+        <%= f.input :surname, error: false %>
         <%= f.input :invitation_token, required: false, disabled: true %>
         <%= f.input :user_type, disabled: true, required: false, input_html: {value: resource.user_type.name} %>
         <%= f.input :manager, disabled: true, required: false, input_html: {value: resource.manager.full_name} %>
-        <%= f.button :submit, "Create my account", class: "btn btn-large btn-primary" %>
+        <%= f.button :submit, 'Create my account', class: 'btn btn-large btn-primary' %>
     <% end %>
     <p>Already registered? <%= link_to "Sign in now!", sign_in_path %></p>
   </div>

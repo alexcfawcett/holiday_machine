@@ -1,95 +1,153 @@
 require "spec_helper"
-#require'pry'
-#binding.pry
 
 describe Absence do
 
-  let!(:manager) {FactoryGirl.create(:manager)}
+  let(:manager) {FactoryGirl.create(:manager)}
 
-  let!(:user) {FactoryGirl.create(:user, manager_id: manager.id)}
+  let(:user) {FactoryGirl.create(:user, manager_id: manager.id)}
 
   context 'on creation' do
-    context 'if user does not exist' do
+    context 'when user does not exist' do
       before do
-        @absence = Absence.new(date_from: "20/10/2014", date_to: "24/10/2014", description: "Test Holiday description",
-                               holiday_status_id: 1, absence_type_id: 1, user_id: 999)
+        @absence = described_class.new(date_from: "20/10/2014",
+                               date_to: "24/10/2014",
+                               description: "Test Holiday description",
+                               holiday_status_id: HolidayStatusConstants::HOLIDAY_STATUS_PENDING,
+                               absence_type_id: AbsenceTypeConstants::ABSENCE_TYPE_HOLIDAY,
+                               user_id: 999)
       end
 
-      it "should not be valid" do
-        @absence.should_not be_valid
-      end
+      it { expect(@absence).to_not be_valid }
+
     end
 
-    context 'if a user already has a holiday booked between dates' do
+    context 'when a user already has a holiday booked between dates' do
       before do
-        Absence.create(date_from: "20/10/2014", date_to: "24/10/2014",
-                                 description: "Test Holiday description",
-                               holiday_status_id: 1, absence_type_id: 1, user_id: user.id)
-        @absence = Absence.new(date_from: "22/10/2014", date_to: "24/10/2014", description: "Test Holiday description",
-                               holiday_status_id: 1, absence_type_id: 1, user_id: user.id)
+        described_class.create(date_from: "20/10/2014",
+                       date_to: "24/10/2014",
+                       description: "Test Holiday description",
+                       holiday_status_id: HolidayStatusConstants::HOLIDAY_STATUS_PENDING,
+                       absence_type_id: AbsenceTypeConstants::ABSENCE_TYPE_HOLIDAY,
+                       user_id: user.id)
+        @absence = described_class.new(date_from: "22/10/2014",
+                               date_to: "24/10/2014",
+                               description: "Test Holiday description",
+                               holiday_status_id: HolidayStatusConstants::HOLIDAY_STATUS_PENDING,
+                               absence_type_id: AbsenceTypeConstants::ABSENCE_TYPE_HOLIDAY,
+                               user_id: user.id)
       end
 
-      it "should not be valid" do
-        @absence.should_not be_valid
-      end
+      it { expect(@absence).to_not be_valid }
     end
 
-    context 'if a user provides invalid dates' do
+    context 'when a user provides invalid dates' do
       before do
-        @absence = Absence.new(date_from: "", date_to: "24/10/2014", description: "Test Holiday description",
-                                  holiday_status_id: 1, absence_type_id: 1, user_id: user.id)
+        @absence = described_class.new(date_from: "",
+                               date_to: "24/10/2014",
+                               description: "Test Holiday description",
+                               holiday_status_id: HolidayStatusConstants::HOLIDAY_STATUS_PENDING,
+                               absence_type_id: AbsenceTypeConstants::ABSENCE_TYPE_HOLIDAY,
+                               user_id: user.id)
       end
 
-      it "should not be valid" do
-        @absence.should_not be_valid
-      end
+      it { expect(@absence).to_not be_valid }
     end
 
   end
 
-  context 'after creation' do
+  describe 'scopes' do
 
-    let(:today) {Time.zone.now.strftime("%d/%m/%Y")}
-    let(:next_monday) {Date.commercial(Date.today.year, 1+Date.today.cweek, 1).in_time_zone.strftime("%d/%m/%Y")}
-    let!(:inactive_absence) {user.absences.create!(date_from: next_monday, date_to: next_monday,
-                                             description: "Test description", holiday_status_id: 1, absence_type_id: 1)}
-    let!(:active_absence) {user.absences.create!(date_from: today, date_to: today, description: "Test description",
-                                           holiday_status_id: 1, absence_type_id: 1)}
+    let(:next_monday) { Date.commercial(Date.today.year, 1+Date.today.cweek, 1).in_time_zone.strftime("%d/%m/%Y") }
+    let(:last_monday) { Date.commercial(Date.today.year, 1-Date.today.cweek, 1).in_time_zone.strftime("%d/%m/%Y") }
+    subject { @active_absence }
 
-    subject { active_absence }
+    before(:each) do
+      today = Time.zone.now.strftime("%d/%m/%Y")
+      @active_absence = user.absences.create(date_from: today,
+                                                  date_to: today,
+                                                  description: "Test description",
+                                                  holiday_status_id: HolidayStatusConstants::HOLIDAY_STATUS_PENDING,
+                                                  absence_type_id: AbsenceTypeConstants::ABSENCE_TYPE_HOLIDAY)
 
-    it { should be_valid }
-    its(:description) { should eq("Test description") }
-    its(:holiday_status_id) { should eq(1) }
-    its(:absence_type_id) { should eq(1) }
-    its(:user_id) { should eq(user.id) }
+    end
+
+    it { expect(subject).to be_valid }
 
     describe '.active_team_holidays' do
       
-      it 'should have the correct record count' do
-        Absence.active_team_holidays(user.manager_id).count.should eq(1.0)
+      it 'has an active team holiday record count of 1' do
+        expect(described_class.active_team_holidays(user.manager_id).count).to eq(1.0)
       end
 
-      it 'should include active holidays' do
-        Absence.active_team_holidays(user.manager_id).should include(active_absence)
+      it 'includes the active absence (the subject)' do
+        expect(described_class.active_team_holidays(user.manager_id)).to include(subject)
       end
 
-      it 'should not include inactive holidays' do
-        Absence.active_team_holidays(user.manager_id).should_not include(inactive_absence)
+      it 'does not include any upcoming holidays' do
+        subject.date_from = next_monday
+        subject.date_to = next_monday
+        subject.save!
+        expect(described_class.active_team_holidays(user.manager_id)).to_not include(subject)
       end
     end
 
     describe '.upcoming_team_holidays' do
-      it 'should have the correct record count' do
-        Absence.upcoming_team_holidays(user.manager_id).count.should eq(1.0)
+      context 'when a holiday is set to be in the future' do
+        before(:each) do
+          subject.date_from = next_monday
+          subject.date_to = next_monday
+          subject.save!
+        end
+
+        it 'has an upcoming holiday count of 1' do
+          expect(described_class.upcoming_team_holidays(user.manager_id).count).to eq(1.0)
+        end
+
+        it 'includes our upcoming holiday defined' do
+          expect(described_class.upcoming_team_holidays(user.manager_id)).to include(subject)
+        end
       end
 
-      it 'should include upcoming holidays' do
-        Absence.upcoming_team_holidays(user.manager_id).should include(inactive_absence)
+      it 'does not include current holidays' do
+        expect(described_class.upcoming_team_holidays(user.manager_id)).to_not include(subject)
+      end
+    end
+
+    describe '#destroy' do
+
+      context 'when in the past' do
+
+        before(:each) do
+          subject.date_from = last_monday
+          subject.date_to = last_monday
+        end
+
+        it 'is not destroyed when Holiday Status is approved' do
+          subject.holiday_status_id = HolidayStatusConstants::HOLIDAY_STATUS_APPROVED
+          expect { subject.destroy }.to_not change(described_class, :count)
+        end
+
+        it 'is not destroyed when Holiday Status is taken' do
+          subject.holiday_status_id = HolidayStatusConstants::HOLIDAY_STATUS_TAKEN
+          expect { subject.destroy }.to_not change(described_class, :count)
+        end
+
+        it 'is destroyed when Holiday Status is pending' do
+          subject.holiday_status_id = HolidayStatusConstants::HOLIDAY_STATUS_PENDING
+          expect { subject.destroy }.to change(described_class, :count).by(-1)
+        end
+
+        it 'is destroyed when Holiday Status is rejected' do
+          subject.holiday_status_id = HolidayStatusConstants::HOLIDAY_STATUS_REJECTED
+          expect { subject.destroy }.to change(described_class, :count).by(-1)
+        end
       end
 
-      it 'should not include active holidays' do
-        Absence.upcoming_team_holidays(user.manager_id).should_not include(active_absence)
+      it 'is destroyed when the dates are set in the future' do
+        subject.date_from = next_monday
+        subject.date_to = next_monday
+        subject.save!
+        expect { subject.destroy}.to change(described_class, :count).by(-1)
       end
     end
   end

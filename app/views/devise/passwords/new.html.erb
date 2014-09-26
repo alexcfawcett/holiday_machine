@@ -1,14 +1,17 @@
 <fieldset class="login">
-  <legend class="login">Forgot your password?</legend>
+  <h1>Forgot your password?</h1>
 
-  <%= form_for(resource, :as => resource_name, :url => password_path(resource_name), :html => {:method => :post}) do |f| %>
-      <%= devise_error_messages! %>
+  <div class="span6 offset3">
+    <%= form_for(resource, as: resource_name, url: password_path(resource_name), html: { method: :post } ) do |f| %>
+        <%= render 'shared/error_messages', object: f.object %>
 
-      <p><%= f.label :email %><br/>
-        <%= f.text_field :email %></p>
+        <%= f.label :email %>
+        <%= f.text_field :email %>
 
-      <p><%= f.submit "Send me reset password instructions" %></p>
-  <% end %>
+        <p><%= f.submit 'Send me reset password instructions', class: 'btn btn-large btn-primary' %></p>
+    <% end %>
 
-  <%= render :partial => "devise/shared/links" %>
+    <%= render partial: 'devise/shared/links' %>
+  </div>
+
 </fieldset>
