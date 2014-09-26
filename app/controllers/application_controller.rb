@@ -1,3 +1,4 @@
+require_relative '../../config/initializers/user_type_constants'
 class ApplicationController < ActionController::Base
   protect_from_forgery with: :exception
   before_filter :configure_permitted_parameters, if: :devise_controller?
@@ -39,7 +40,7 @@ class ApplicationController < ActionController::Base
   end
 
   def authenticate_manager
-    redirect_to root_path unless current_user.user_type.name == 'Manager'
+    redirect_to root_path unless current_user.user_type_id == UserTypeConstants::USER_TYPE_MANAGER
   end
 
   # Rails 4 Strong Parameters

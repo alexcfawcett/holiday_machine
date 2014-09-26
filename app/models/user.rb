@@ -1,3 +1,4 @@
+require_relative '../../config/initializers/user_type_constants'
 class User < ActiveRecord::Base
 
   devise :invitable, :database_authenticatable, :confirmable, :lockable, :recoverable,
@@ -41,7 +42,7 @@ class User < ActiveRecord::Base
         manager_id
     )}
   #Active managers only
-  scope :active_managers, ->{where('confirmed_at NOT NULL AND user_type_id = 2')}
+  scope :active_managers, ->{where('confirmed_at NOT NULL AND user_type_id = ?', UserTypeConstants::USER_TYPE_MANAGER)}
 
   ## Instance methods
   def full_name
@@ -113,7 +114,7 @@ class User < ActiveRecord::Base
   end
 
   def is_manager?
-    return true if user_type_id == 2
+    return true if user_type_id == UserTypeConstants::USER_TYPE_MANAGER
   end
 
   private
@@ -135,6 +136,6 @@ end
 def validate_password_strength
   if password.present? and not password.match(/^.*(?=.{8,})(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=]).*$/)
     errors.add(:password, 'must be at least 8 characters long, contain at least one lower case letter, one upper case letter,
-    one digit + one special character. Valid special characters are: @, #, $, %, ^, &, +, = ')
+    one digit and one special character. Valid special characters are: @, #, $, %, ^, &, +, = ')
   end
 end
