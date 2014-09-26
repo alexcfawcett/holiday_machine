@@ -24,14 +24,14 @@ describe "Absence pages" do
 
       describe "error messages" do
         before { click_button "Add Leave" }
-        it { should have_selector('div.alert.alert-error') }
+        it { expect(subject).to have_selector('div.alert.alert-error') }
       end
     end
 
     describe "with valid information" do
 
       before do
-        fill_in "Date from",        with: "23/07/2014"
+        fill_in "Date from",   with: "23/07/2014"
         fill_in "Date to",     with: "23/07/2014"
         page.select('Holiday', from: 'Absence type')
         fill_in "Description", with: "Test Description.."
@@ -44,7 +44,7 @@ describe "Absence pages" do
       describe "after saving the absence" do
         before { click_button submit }
 
-        it { should have_selector('div.alert.alert-success', text: I18n.t('absence_created')) }
+        it { expect(subject).to have_selector('div.alert.alert-success', text: I18n.t('absence_created')) }
       end
     end
   end
@@ -52,19 +52,22 @@ describe "Absence pages" do
   describe "days remaining widget" do
 
     context 'default' do
-      it { should have_selector('span', text: '25') }
+      it { expect(subject).to have_selector('span', text: '25') }
     end
 
     context 'changed year' do
-      let!(:absence) {Absence.create!(date_from: "23/07/2015", date_to: "23/07/2015",
-                                    description: "Test description", holiday_status_id: 1, absence_type_id: 1,
+      let!(:absence) {Absence.create(date_from: "23/07/2015",
+                                     date_to: "23/07/2015",
+                                    description: "Test description",
+                                    holiday_status_id: HolidayStatusConstants::HOLIDAY_STATUS_PENDING,
+                                    absence_type_id: AbsenceTypeConstants::ABSENCE_TYPE_HOLIDAY,
                                     user_id: user.id)}
 
       # Requires Firefox
       # Check Selenium change log for supported Firefox version (Currently: 29 as of 24/07/14)
       it 'should update days remaining span', js:true do
         page.select('Oct 2014 to Sept 2015', from: 'holiday_year[id]')
-        page.should have_selector('span', text: '24')
+        expect(page).to have_selector('span', text: '24')
       end
     end
 

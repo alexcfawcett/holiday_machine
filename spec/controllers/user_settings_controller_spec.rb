@@ -6,7 +6,7 @@ describe UserSettingsController do
     it "should be successful" do
       pending "No the functionality implemented"
       get 'change_manager'
-      response.should be_success
+      expect(response).to be_success
     end
   end
 

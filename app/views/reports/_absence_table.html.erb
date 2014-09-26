@@ -10,6 +10,7 @@
 			<th>Status</th>
 		</thead>
     <tbody>
+      <%= will_paginate @users %>
       <%= render partial: 'absence_table_split', :locals => { :current_user => current_user } %>
       <% @users.each do |user| %>
         <%= render partial: 'absence_table_split', :locals => { :current_user => user } %>

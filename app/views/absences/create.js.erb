@@ -19,7 +19,7 @@ $(document).ready(function () {
       var holiday_year_id = $("#holiday_year_id").val();
       if (holiday_year_id == <%= @absence.holiday_year_id %>) {
       	
-      	if (<%=@absence.absence_type_id%>==1){
+      	if (<%=@absence.absence_type_id == AbsenceTypeConstants::ABSENCE_TYPE_HOLIDAY %>){
 	        $('table#holidays').css('visibility', 'visible');
 	        $('table#holidays').show();
 	        $('table#holidays tbody').append('<%= escape_javascript(create_absence_row(@absence))%>');

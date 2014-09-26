@@ -10,7 +10,7 @@ Requirements
 -----------
 
 * ruby 2.0.0p247
-* Firefox to test Javascript using the Selenium gem. Check [Selenium changelog] for most recent supported Firefox version (Currently: v29  --v31 appears to work as of 01/09/14)
+* Firefox to test Javascript using the Selenium gem. Check [Selenium changelog] for most recent supported Firefox version (Currently: v31 works as of 23/09/2014)
 
 
 Installation
@@ -39,7 +39,7 @@ Logging In
 After installing, you can log in using the following manager account:
 
 **Email:** manager@example.com  
-**Password:** passwordpassword
+**Password:** Passw0rd@
 
 
 Signing Up
@@ -68,17 +68,13 @@ bundle exec rspec
 
 Todo 
 -------------
-* Fix "View" links on "Manage Absences" page
-* Fix the year selection on "Manage Allowances" page
-* Fix holiday rejection; allowance is not always replenished
-* Add help and contact pages (covering lost passwords, etc)
+* Fix "View" links on "Manage Absences" page (this looks it is fixed already - ES to confirm + delete).
 * Test and lock down routes as needed (users should not be able to access manager-only areas)
-* Replace the SMTP details in config with environment variables, and the change password
+* Replace the SMTP details in config with environment variables, and the change password (Change password functionality is now in - ES can this section be removed?)
 * Replace Gmail SMTP with something else (hourly and daily send limits cause exceptions), OR:
 * Configure devise to intelligently handle SMTP send rejection (if possible)
 * Replace the secret_token (config/initializers/secret_token.rb) with env var for production
 * Revisit the calendar drop down options and clarify
-* Revisit the "Reports" table, this page could become very long and unusable
 * On registration, calculate number of holiday days remaining based on current date
 * On invitation, allow manager to set the number of holiday days remaining
 * Revisit “Active Team Holidays” list, is this working correctly for both user types?
@@ -87,6 +83,7 @@ Todo
 * Refactor CSS, clean up the Twitter Bootstrap integration
 * Browser-test and improve the general style and appearance as necessary
 * Add localisation, as needed
+* Password Strength - server function is now in place with tests done in the Edit User feature. Would be nice to get a client side feature in as well going forward too.
 
 
 Notes

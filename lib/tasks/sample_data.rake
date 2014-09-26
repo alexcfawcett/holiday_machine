@@ -18,14 +18,14 @@ def make_user(do_absence, options={})
   timestamp = Time.now.strftime('%Y%m%d%H%M%S%L')
 
   default_options = {
-      :forename => Faker::Name.first_name,
-      :surname => Faker::Name.last_name,
-      :email => "foo-#{timestamp}@example.com",
-      :password => "passwordpassword",
-      :password_confirmation => "passwordpassword",
-      :invite_code => "Sage1nvite00",
-      :user_type_id => 1,
-      :manager_id => 1
+      forename:               Faker::Name.first_name,
+      surname:                Faker::Name.last_name,
+      email:                  "foo-#{timestamp}@example.com",
+      password:               "Passw0rd@",
+      password_confirmation:  "Passw0rd@",
+      invite_code:            "Sage1nvite00",
+      user_type_id:           1,
+      manager_id:             1
   }
   options.reverse_merge!(default_options)
 
@@ -40,11 +40,11 @@ end
 def make_absence(user, options={})
 
   default_options = {
-      :date_from => (Time.zone.now).strftime('%d/%m/%Y'),
-      :date_to => (Time.zone.now + 1.day).strftime('%d/%m/%Y'),
-      :absence_type_id => 1,
-      :holiday_status_id => 1,
-      :description => "Test Holiday"
+      date_from:          (Time.zone.now).strftime('%d/%m/%Y'),
+      date_to:            (Time.zone.now + 1.day).strftime('%d/%m/%Y'),
+      absence_type_id:    1,
+      holiday_status_id:  1,
+      description:        "Test Holiday"
   }
   options.reverse_merge!(default_options)
   user.absences.create(options)
