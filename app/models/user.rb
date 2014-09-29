@@ -65,12 +65,10 @@ class User < ActiveRecord::Base
     UserDaysForYear.where("user_id = ? and holiday_year_id = ?", self.id,year.id).first
   end
 
-  # Change (or remove) this to use above method
   def get_holiday_allowance #For current year
     today = Date.today
     holiday_year = HolidayYear.where('date_start<=? and date_end>=?', today, today).first
-    allowance = UserDaysForYear.where("user_id = ? and holiday_year_id = ?", self.id, holiday_year.id).first
-    allowance
+    get_holiday_allowance_for_selected_year holiday_year
   end
 
   def create_allowance
@@ -83,7 +81,7 @@ class User < ActiveRecord::Base
   end
 
   def user_days_for_selected_year year
-    UserDay.where(:user_id => self.id, :holiday_year_id => year.id)
+    UserDay.where(user_id: self.id, holiday_year_id: year.id)
   end
 
   def add_inviting_manager
@@ -113,7 +111,7 @@ class User < ActiveRecord::Base
   end
 
   def is_manager?
-    return true if user_type_id == UserTypeConstants::USER_TYPE_MANAGER
+    return user_type_id == UserTypeConstants::USER_TYPE_MANAGER
   end
 
   private
