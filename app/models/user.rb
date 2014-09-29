@@ -8,7 +8,6 @@ class User < ActiveRecord::Base
   before_update :add_inviting_manager
   before_save :ensure_authentication_token
   after_create :create_allowance
-  #after_destroy :delete_all_allowances
 
   ## Associations
   belongs_to :manager, class_name: 'User', foreign_key: 'manager_id'
@@ -27,7 +26,7 @@ class User < ActiveRecord::Base
   validates_presence_of :forename, :surname, :user_type
   validates_presence_of :invite_code, on: :create
   validates_each :invite_code, on: :create do |record, attr, value|
-    record.errors.add attr, "incorrect invite code" unless value && value == "Sage1nvite00"
+    record.errors.add attr, I18n.t('user.incorrect_invite_code') unless value && value == "Sage1nvite00"
   end
   validate :validate_not_own_manager, :validate_password_strength
 
@@ -129,13 +128,12 @@ end
 
 def validate_not_own_manager
   if manager_id != nil && id == manager_id
-    errors.add(:manager_id, 'cannot be self')
+    errors.add(:manager_id, I18n.t('user.manager_unable_to_validate_themself'))
   end
 end
 
 def validate_password_strength
   if password.present? and not password.match(/^.*(?=.{8,})(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=]).*$/)
-    errors.add(:password, 'must be at least 8 characters long, contain at least one lower case letter, one upper case letter,
-    one digit and one special character. Valid special characters are: @, #, $, %, ^, &, +, = ')
+    errors.add(:password, I18n.t('user.password_too_weak'))
   end
 end

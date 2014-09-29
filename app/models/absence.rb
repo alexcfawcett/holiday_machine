@@ -105,10 +105,10 @@ class Absence < ActiveRecord::Base
     return if date_from.nil?
 
    if date_on_non_working_day(date_from) && half_day_from != "Full Day"
-     errors.add(:date_from, "- your half day falls on a non-working day")
+     errors.add(:date_from, I18n.t('absence.half_day_on_non_working_day'))
      false
    elsif date_on_non_working_day(date_to) && half_day_to != "Full Day"
-     errors.add(:date_to, "- your half day falls on a non-working day")   
+     errors.add(:date_to, I18n.t('absence.half_day_on_non_working_day'))
      false
    end
   end
@@ -117,7 +117,7 @@ class Absence < ActiveRecord::Base
     if holiday_status_id == HolidayStatusConstants::HOLIDAY_STATUS_APPROVED ||
         holiday_status_id == HolidayStatusConstants::HOLIDAY_STATUS_TAKEN
       if date_to < Date.today
-        errors.add(:base, "Holiday has passed")
+        errors.add(:base, I18n.t('absence.holiday_has_passed'))
         false
       end
     end
@@ -163,25 +163,25 @@ class Absence < ActiveRecord::Base
 
   def date_from_must_be_before_date_to
     return false if date_from.nil? || date_to.nil?
-    errors.add(:date_from, " must be before date to.") if date_from > date_to
+    errors.add(:date_from, I18n.t('absence.date_from_must_be_before_date_to')) if date_from > date_to
   end
 
   def working_days_greater_than_zero
     return false if date_from.nil? || date_to.nil?
 
     @working_days = business_days_between
-    errors.add(:working_days_used, " - This holiday request uses no working days") if @working_days==0
+    errors.add(:working_days_used, I18n.t('absence.request_uses_no_working_days')) if @working_days==0
   end
 
   def holiday_must_not_straddle_holiday_years
     number_years = HolidayYear.holiday_years_containing_holiday(date_from, date_to).count
-    errors.add(:base, "Holiday must not cross years") if number_years> 1
+    errors.add(:base, I18n.t('absence.holiday_request_crosses_years')) if number_years> 1
   end
 
   def no_overlapping_holidays
     absences = Absence.where(user_id: self.user_id)
     absences.each do |absence|
-      errors.add(:base, "Some leave already exists within this date range") if overlaps?(absence)
+      errors.add(:base, I18n.t('absence.overlapping_holiday_request')) if overlaps?(absence)
     end
   end
 
@@ -191,7 +191,7 @@ class Absence < ActiveRecord::Base
 
   def convert_uk_date_to_iso date_str, is_date_from
     if date_str.length != 10
-      errors.add(:date, "Invalid date format.")
+      errors.add(:date, I18n.t('invalid_date_format'))
       return nil
     end
 
@@ -243,7 +243,7 @@ class Absence < ActiveRecord::Base
 
   def dont_exceed_days_remaining
     if user.nil?
-      errors.add(:user_id, "is invalid")
+      errors.add(:user_id, I18n.t('is_invalid'))
       return
     end
 
@@ -252,7 +252,7 @@ class Absence < ActiveRecord::Base
     if holiday_allowance == 0 or holiday_allowance.nil? then
       return
     end
-    errors.add(:working_days_used, "-Number of days selected exceeds your allowance!") if holiday_allowance.days_remaining < business_days_between
+    errors.add(:working_days_used, I18n.t('absence.request_exceeds_allowance')) if holiday_allowance.days_remaining < business_days_between
   end
 
   # TODO: This currently does not work
@@ -260,7 +260,7 @@ class Absence < ActiveRecord::Base
     if date_from.to_date == date_to.to_date
       #Ensure the half days match
       if (half_day_from != half_day_to) # && (half_day_from != "Full Day" || half_day_to != "Full Day")
-        errors.add(:base, "Please ensure you select the same type of half day from both drop downs")
+        errors.add(:base, I18n.t('absence.select_same_type_of_half_day'))
         return false
       else
         if half_day_from == "Half Day AM"
@@ -273,10 +273,10 @@ class Absence < ActiveRecord::Base
       end
     else
       if half_day_from != "Full Day" && half_day_from != "Half Day PM"
-        errors.add(:base, "Leave can only begin with a half day in the afternoon, since this would mean you would be coming in on the afternoon of the first day of your leave")
+        errors.add(:base, I18n.t('absence.holiday_can_only_begin_with_half_day_in_the_afternoon'))
         return false
       elsif half_day_to != "Full Day" && half_day_to != "Half Day AM"
-        errors.add(:base, "A holiday cannot end with a half day in the afternoon, since you would be at work in the morning on the last day of your leave")
+        errors.add(:base, I18n.t('absence.holiday_cannot_end_with_half_day_in_the_afternoon'))
         return false
       else
         if half_day_from == "Half Day PM"
