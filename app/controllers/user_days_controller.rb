@@ -41,15 +41,10 @@ class UserDaysController < ApplicationController
     @allowance = @user.get_holiday_allowance_for_selected_year(@user_day.holiday_year)
     @allowance.days_remaining += @user_day.no_days
 
-    respond_to do |format|
-      if @user_day.save and @allowance.save
-        flash[:success] = "This persons holiday allowance has been successfully updated."
-        format.html { redirect_to user_days_url, flash: { holiday_year_id: holiday_year_id } }
-      else
-        flash.now[:error] = "There was a problem updating this persons holiday allowance."
-        #TODO below prevents error, but loses the validation messages
-        format.html { redirect_to user_days_url, flash: { holiday_year_id: holiday_year_id } }
-      end
+    if @user_day.save and @allowance.save
+      redirect_to user_days_url, flash: { success: I18n.t('user_day.update_success'), holiday_year_id: holiday_year_id }
+    else
+      redirect_to user_days_url, flash: { error: I18n.t('user_day.update_failure'), holiday_year_id: holiday_year_id }
     end
   end
   

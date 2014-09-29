@@ -44,3 +44,8 @@ en:
     password_too_weak: 'must be at least 8 characters long, contain at least one lower case letter, one upper case letter,
                             one digit and one special character. Valid special characters are: @, #, $, %, ^, &, +, = '
     incorrect_invite_code: 'incorrect invite code'
+
+
+  user_day:
+    update_success: 'This persons holiday allowance has been successfully updated.'
+    update_failure: 'There was a problem updating this persons holiday allowance.'
