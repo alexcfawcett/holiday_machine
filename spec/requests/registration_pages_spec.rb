@@ -4,6 +4,11 @@ describe "User pages" do
 
   subject { page }
 
+  shared_examples_for 'invalid form entry' do
+    it { expect(subject).to have_selector('div.alert.alert-error') }
+    it { expect(subject).to have_content('The form contains 1 error') }
+  end
+
   describe "signup" do
 
     before { visit register_path }
@@ -55,50 +60,52 @@ describe "User pages" do
 
         it { expect(subject).to have_selector('div.alert.alert') }
       end
-    end
 
-    describe "edit" do
-      let(:user) { create(:user) }
-      let(:new_forename)  { "New Name" }
-      let(:new_password) { "newPassw0rd@" }
-      let(:submit) { 'Save changes' }
-
-      before do
-        sign_in user
-        visit edit_user_registration_path
-      end
-
-      describe "with valid information" do
+      describe 'the invite code' do
         before do
-          fill_in "Forename", with: new_forename
+          fill_in 'Invite code', with: 'Sage1nvite01'
           click_button submit
         end
 
-        it { expect(subject).to have_selector('h3', text: "#{new_forename} #{user.surname}") }
-        it { expect(subject).to have_selector('div.alert.alert', text: I18n.t('devise.registrations.updated')) }
-        it { expect(subject).to have_link('Sign Out', href: sign_out_path) }
-        specify { expect(user.reload.forename).to  eq new_forename }
+        it { expect(subject).to have_selector('div.alert.alert-error') }
+
+        it_behaves_like 'invalid form entry'
+      end
+    end
+  end
+
+  describe "edit" do
+    let(:user) { create(:user) }
+    let(:new_forename)  { "New Name" }
+    let(:new_password) { "newPassw0rd@" }
+    let(:submit) { 'Save changes' }
+
+    before do
+      sign_in user
+      visit edit_user_registration_path
+    end
+
+    describe "with valid information" do
+      before do
+        fill_in "Forename", with: new_forename
+        click_button submit
       end
 
-      describe "the password field" do
+      it { expect(subject).to have_selector('h3', text: "#{new_forename} #{user.surname}") }
+      it { expect(subject).to have_selector('div.alert.alert', text: I18n.t('devise.registrations.updated')) }
+      it { expect(subject).to have_link('Sign Out', href: sign_out_path) }
+      specify { expect(user.reload.forename).to  eq new_forename }
+    end
 
-        shared_examples_for 'invalid form entry' do
-          it { expect(subject).to have_selector('div.alert.alert-error') }
-          it { expect(subject).to have_content('The form contains 1 error') }
-        end
+    describe "the password field" do
 
+      context 'entering valid password information' do
         before do
           fill_in "New password", with: new_password
           fill_in "New password confirmation", with: new_password
         end
 
-        describe "without supplying a current password" do
-          before {click_button submit }
-
-          it_behaves_like 'invalid form entry'
-        end
-
-        describe "with supplying a current password" do
+        describe 'entering a valid current password' do
           before do
             fill_in "Current password", with: user.password
             click_button submit
@@ -109,6 +116,14 @@ describe "User pages" do
           end
         end
 
+        describe 'without supplying a current password' do
+          before {click_button submit }
+
+          it_behaves_like 'invalid form entry'
+        end
+      end
+
+      context 'entering invalid password information' do
         describe 'supply a password of length less than 8 characters' do
           before { set_user_password_in_edit_page(user.password, 'foobar1') }
 
@@ -140,6 +155,5 @@ describe "User pages" do
         end
       end
     end
-
   end
 end

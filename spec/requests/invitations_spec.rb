@@ -23,16 +23,14 @@ describe "Invitation" do
 
       describe 'supplying an invalid email address' do
         it 'displays an error on the form' do
-          fill_in 'Email', with: 'dodgyemail@foobar@.com@*'
-          click_button submit
+          set_email_field('dodgyemail@foobar@.com@*', submit)
           expect(subject).to have_selector('div.alert.alert-error')
         end
       end
 
       describe 'supplying an already existing email address' do
         it 'displays an error on the form' do
-          fill_in 'Email', with: manager.email
-          click_button submit
+          set_email_field(manager.email, submit)
           expect(subject).to have_selector('div.alert.alert-error')
         end
       end

@@ -22,3 +22,30 @@
 en:
   app_url: "http://holiday-machine.herokuapp.com"
   absence_created: "Leave created!"
+  invalid_date_format: 'Invalid date format'
+  is_invalid: 'is invalid'
+
+  absence:
+    request_exceeds_allowance: '-Number of days selected exceeds your allowance!'
+    holiday_has_passed: 'Holiday has already passed'
+    date_from_must_be_before_date_to: 'must be before date to.'
+    request_uses_no_working_days: ' - This holiday request uses no working days'
+    holiday_request_crosses_years: 'Holiday must not cross years'
+    overlapping_holiday_request: 'Some leave already exists within this date range'
+    half_day_on_non_working_day: '- your half day falls on a non-working day'
+    select_same_type_of_half_day: 'Please ensure you select the same type of half day from both drop downs'
+    holiday_cannot_end_with_half_day_in_the_afternoon: 'A holiday cannot end with a half day in the afternoon,
+    since you would be at work in the morning on the last day of your leave'
+    holiday_can_only_begin_with_half_day_in_the_afternoon: 'Leave can only begin with a half day in the afternoon,
+    since this would mean you would be coming in on the afternoon of the first day of your leave'
+
+  user:
+    manager_unable_to_validate_themself: 'cannot be self'
+    password_too_weak: 'must be at least 8 characters long, contain at least one lower case letter, one upper case letter,
+                            one digit and one special character. Valid special characters are: @, #, $, %, ^, &, +, = '
+    incorrect_invite_code: 'incorrect invite code'
+
+
+  user_day:
+    update_success: 'This persons holiday allowance has been successfully updated.'
+    update_failure: 'There was a problem updating this persons holiday allowance.'

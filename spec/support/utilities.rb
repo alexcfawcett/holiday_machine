@@ -20,3 +20,8 @@ def set_user_password_in_edit_page(old_password, new_password)
   fill_in "Current password", with: old_password
   click_button 'Save changes'
 end
+
+def set_email_field(email_address, submit)
+  fill_in 'Email', with: email_address
+  click_button submit
+end

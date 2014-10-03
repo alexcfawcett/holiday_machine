@@ -8,27 +8,29 @@ describe UserDay do
 
   it { expect(subject).to be_valid }
 
-  describe 'User Id not defined' do
-    before { valid_user_day.user_id = nil }
+  context 'when validation fails' do
+    describe 'User Id not defined' do
+      before { valid_user_day.user_id = nil }
 
-    it { expect(subject).to_not be_valid }
-  end
+      it { expect(subject).to_not be_valid }
+    end
 
-  describe 'Number of days is not defined' do
-    before { valid_user_day.no_days = nil }
+    describe 'Number of days is not defined' do
+      before { valid_user_day.no_days = nil }
 
-    it { expect(subject).to_not be_valid }
-  end
+      it { expect(subject).to_not be_valid }
+    end
 
-  describe 'Reason is not defined' do
-    before { valid_user_day.reason = '' }
+    describe 'Reason is not defined' do
+      before { valid_user_day.reason = '' }
 
-    it { expect(subject).to_not be_valid }
-  end
+      it { expect(subject).to_not be_valid }
+    end
 
-  describe 'Number of days is not a numerical value' do
-    before { valid_user_day.no_days = 'L' }
+    describe 'Number of days is not a numerical value' do
+      before { valid_user_day.no_days = 'L' }
 
-    it { expect(subject).to_not be_valid }
+      it { expect(subject).to_not be_valid }
+    end
   end
 end
