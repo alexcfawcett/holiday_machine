@@ -17,11 +17,11 @@ class Absence < ActiveRecord::Base
   # Validation
   validates :date_from, :date_to, :description, :holiday_status_id, :user_id, :absence_type_id, presence: true
   validate :holiday_must_not_straddle_holiday_years
-  validate :half_days_not_on_working_days, :on => :create
-  validate :dont_exceed_days_remaining, :on => :create
+  validate :half_days_not_on_working_days, on: :create
+  validate :dont_exceed_days_remaining, on: :create
   validate :date_from_must_be_before_date_to
   validate :working_days_greater_than_zero
-  validate :no_overlapping_holidays, :on => :create
+  validate :no_overlapping_holidays, on: :create
 
   # Callbacks
   before_validation :adjust_half_days
