@@ -49,3 +49,7 @@ group :development, :test do
   gem 'shoulda-matchers'
   gem 'selenium-webdriver'
 end
+
+group :production do
+  'rails_12factor'
+end
