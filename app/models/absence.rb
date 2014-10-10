@@ -81,6 +81,7 @@ class Absence < ActiveRecord::Base
     status_authorised = HolidayStatus.find_by_status("Authorised")
     holidays.each do |hol|
       if hol.holiday_status == status_authorised
+        # self.where(:absence.id => hol.id).update_column(:holiday_status_id => status_taken.id)
         exec_sql = ActiveRecord::Base.connection
         exec_sql.execute("UPDATE absences SET holiday_status_id = #{status_taken.id} WHERE absences.id = #{hol.id}")
       end
@@ -92,12 +93,13 @@ class Absence < ActiveRecord::Base
   def self.select_user_group current_user, selection_type
     case selection_type
       when 'ALL'
-        return User.all
+        User.all
       when 'ME'
         User.where(id: current_user.id)
       else
         # Doesn't work for managers (they see the team upwards)
-        return User.get_team_users(current_user.manager_id)        
+        # TODO need to provide two views for managers
+        User.get_team_users(current_user.manager_id)        
     end
   end
 

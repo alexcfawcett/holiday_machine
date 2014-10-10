@@ -4,9 +4,7 @@ class AbsencesController < ApplicationController
 
   before_filter :authenticate_user!
 
-  # GET /vacations
   def index
-
     load_data
     @absence = current_user.absences.build
     @absence.holiday_year_id = HolidayYear.current_year.id
@@ -15,10 +13,8 @@ class AbsencesController < ApplicationController
       format.js
       format.html
     end
-
   end
 
-  # GET /vacations/1
   def show
     @absence = Absence.find_by_id(params[:id])
     if @absence.blank?
@@ -32,8 +28,6 @@ class AbsencesController < ApplicationController
     end
   end
 
-  # POST /vacations
-  # POST /vacations.xml
   def create
     @absence = Absence.new(params[:absence])
     @absence.user = current_user
@@ -55,33 +49,23 @@ class AbsencesController < ApplicationController
   end
 
   def update
-    #TODO temp - to bypass the validation around half-days
-
     holiday_status_id = params[:absence][:holiday_status_id].to_i
     @absence = Absence.find_by_id(params[:id])
-
-    @absence.holiday_status_id = holiday_status_id
-    @absence.save
-
-    send_email_to_user
-
+  
     # If the holiday request is rejected, destroy the request (important in order to replenish the days)
     if holiday_status_id == HolidayStatusConstants::HOLIDAY_STATUS_REJECTED
       @absence.destroy
+    else
+      send_email_to_user
+      @absence.update_column(:holiday_status_id, holiday_status_id)
     end
 
     respond_to do |format|
       flash[:notice] = "Status has been changed"
       format.js
     end
-
   end
 
-
-
-
-  # DELETE /absences/1
-  # DELETE /absences/1.xml
   def destroy
     @absence = Absence.find(params[:id])
 
