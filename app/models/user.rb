@@ -13,7 +13,7 @@ class User < ActiveRecord::Base
   belongs_to :manager, class_name: 'User', foreign_key: 'manager_id'
   has_many :employees, class_name: 'User', foreign_key: "manager_id" do
     def active_only
-      where('confirmed_at NOT NULL')
+      where('confirmed_at IS NOT NULL')
     end
   end
 
@@ -36,12 +36,12 @@ class User < ActiveRecord::Base
   ## Scopes
   #Includes self if manager
   scope :get_team_users, lambda { |manager_id| where(
-        '(users.manager_id = ? or users.id = ?) AND confirmed_at NOT NULL',
+        '(users.manager_id = ? or users.id = ?) AND confirmed_at IS NOT NULL',
         manager_id,
         manager_id
     )}
   #Active managers only
-  scope :active_managers, ->{where('confirmed_at NOT NULL AND user_type_id = ?', UserTypeConstants::USER_TYPE_MANAGER)}
+  scope :active_managers, ->{where('confirmed_at IS NOT NULL AND user_type_id = ?', UserTypeConstants::USER_TYPE_MANAGER)}
 
   ## Instance methods
   def full_name
