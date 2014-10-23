@@ -99,7 +99,9 @@ class Absence < ActiveRecord::Base
       else
         # Doesn't work for managers (they see the team upwards)
         # TODO need to provide two views for managers
-        User.get_team_users(current_user.manager_id)        
+        my_manager_id = current_user.manager_id
+        # User.where("(manager_id = ? ) or (user_id = ? and manager_id != ?)", my_manager_id, my_manager_id, current_user.id)
+        User.get_team_users(my_manager_id)        
     end
   end
 
@@ -236,10 +238,9 @@ class Absence < ActiveRecord::Base
 
   # Adds days back when deleting leave
   def add_days_remaining
-    holiday_allowance.days_remaining += self.working_days_used
     return unless self.absence_type_id == AbsenceTypeConstants::ABSENCE_TYPE_HOLIDAY
     holiday_allowance = self.user.get_holiday_allowance_for_dates self.date_from, self.date_to
-    holiday_allowance.days_remaining += business_days_between
+    holiday_allowance.days_remaining += self.working_days_used
     holiday_allowance.save
   end
 
